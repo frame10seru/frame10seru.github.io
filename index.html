@@ -254,6 +254,12 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 .chb.dr{touch-action:none;cursor:grab}.chb.used{opacity:.45}
 .gtog.lk{background:#EEE;border-color:#999}
 .gwrap{margin:12px 0 4px}
+/* ===== akun, google, masa aktif ===== */
+.gic{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#fff;color:#4285F4;font:800 .95rem Arial,sans-serif;border:2px solid #dadce0}
+.exb{padding:8px 14px;border-radius:16px;border:3px solid var(--ink);margin:8px 0;font-weight:700;background:#E4F7EC}
+.exb.wr{background:#FFF1B8}.exb.ur{background:#FFD0DC}.exb a{color:var(--ink);text-decoration:underline;font-weight:800}
+.lupa{margin-top:8px;padding:10px 12px;border:2px dashed #B9A6E8;border-radius:14px;background:#FBF8FF}.lupa ol{margin:6px 0 10px;padding-left:20px}
+.wb{display:flex;gap:8px;flex:none}.who .wb .go{padding:8px 14px}
 </style>
 </head>
 <body>
@@ -274,9 +280,16 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 
 <section id="login">
 <div class="card"><h3>Masuk</h3>
-<div class="row"><input id="nm" maxlength="14" placeholder="Nama pengguna" autocomplete="username"></div>
+<div class="row"><input id="nm" maxlength="40" placeholder="Nama pengguna" autocomplete="username"></div>
 <div class="row" style="margin-top:8px"><input id="pw" type="password" maxlength="40" placeholder="Kata sandi" autocomplete="current-password"></div>
 <div class="row" style="margin-top:8px"><button class="go" id="log">Masuk</button></div>
+<div class="row" style="margin-top:8px"><button class="go alt" id="glog"><span class="gic">G</span> Masuk dengan Google</button></div>
+<p style="text-align:center;margin:8px 0 0"><button class="lnk" id="lupab">Lupa kata sandi?</button></p>
+<div class="lupa" id="lupa" hidden><p style="margin:0"><b>Lupa kata sandi?</b> Pilih salah satu cara:</p>
+<ol><li>Akunmu sudah terhubung dengan Google? Tekan <b>Masuk dengan Google</b>, lalu ganti kata sandi di menu <b>Akun</b>.</li><li>Daftar memakai alamat email? Tulis emailnya di bawah, kami kirim tautan reset.</li><li>Cara lain: minta bantuan lewat WhatsApp.</li></ol>
+<div class="row"><input id="lem" type="email" maxlength="80" placeholder="Alamat email akun"><button class="go" id="lsend" style="flex:none;min-width:0">Kirim tautan</button></div>
+<a class="wabtn" id="lupawa" data-wa="lupa" href="#" target="_blank" rel="noopener" style="margin-top:8px">Minta bantuan lewat WhatsApp</a></div>
+
 <p class="fb" id="pm" aria-live="polite"></p>
 <p style="text-align:center;margin:0">Belum punya akun? <button class="lnk" id="kd">Daftar di sini</button></p></div>
 <div class="card wacard"><h3>Belum punya kode referal?</h3>
@@ -287,7 +300,7 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <section id="daftar" hidden>
 <div class="card"><h3>Daftar akun baru</h3>
 <p class="mut">Butuh kode dari guru. Pakai nama panggilan, bukan nama lengkap.</p>
-<div class="row"><input id="nm2" maxlength="14" placeholder="Nama pengguna" autocomplete="username"></div>
+<div class="row"><input id="nm2" maxlength="40" placeholder="Nama pengguna" autocomplete="username"></div>
 <div class="row" style="margin-top:8px"><input id="pw2" type="password" maxlength="40" placeholder="Kata sandi (minimal 6)" autocomplete="new-password"></div>
 <p style="margin:12px 0 4px"><b>Saya mendaftar sebagai:</b></p>
 <label class="rd"><input type="radio" name="jenis" value="kelas" checked> Siswa kelas (kode kelas)</label>
@@ -295,6 +308,7 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <label class="rd"><input type="radio" name="jenis" value="guru"> Guru lain (kode sekali pakai)</label>
 <div class="row" style="margin-top:8px"><input id="kg" maxlength="20" placeholder="Kode pendaftaran" autocomplete="off"></div>
 <div class="row" style="margin-top:8px"><button class="go" id="reg">Daftar</button><button class="go alt" id="kb">Kembali ke Masuk</button></div>
+<div class="row" style="margin-top:8px"><button class="go alt" id="greg"><span class="gic">G</span> Daftar dengan Google</button></div>
 <p class="fb" id="pm2" aria-live="polite"></p></div>
 <div class="card wacard"><h3>Belum punya kode referal?</h3>
 <ol><li>Tekan tombol hijau di bawah.</li><li>Kirim pesan ke <b class="wan">admin</b> untuk minta kode referal.</li><li>Sudah dapat kode? Tekan <b>Daftar</b>, lalu isi kodenya.</li></ol>
@@ -302,7 +316,8 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <p class="mut" style="margin:8px 0 0;text-align:center">WhatsApp: <b class="wno"></b></p></div>
 </section>
 <section id="home" hidden>
-<div class="who"><div><div class="wh" id="who"></div><div class="mut">Pilih level, lalu ayo main!</div></div><button class="go alt" id="out">Keluar</button></div>
+<div id="exb"></div>
+<div class="who"><div><div class="wh" id="who"></div><div class="mut">Pilih level, lalu ayo main!</div></div><span class="wb"><button class="go alt" id="set">Akun</button><button class="go alt" id="out">Keluar</button></span></div>
 <div id="st1"></div>
 <div class="grid" id="grid"></div>
 <div class="card"><h3>Papan peringkat 🏆</h3><div id="lb"></div></div>
@@ -318,6 +333,20 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <p class="mut">Panduan guru ada di setiap level. Gunakan benda nyata dulu, misalnya biji atau tutup botol, sebelum bermain.</p></div>
 </section>
 
+<section id="akun" hidden>
+<div class="card"><h3>Pengaturan akun</h3>
+<p class="mut" id="ainfo"></p>
+<h3 style="margin-top:10px">Ubah nama pengguna</h3>
+<div class="row"><input id="un" maxlength="40" placeholder="Nama pengguna baru"><button class="go" id="sun" style="flex:none;min-width:0">Simpan</button></div>
+<div id="pwbox"><h3 style="margin-top:14px">Ubah kata sandi</h3>
+<div class="row"><input id="pw0" type="password" maxlength="40" placeholder="Kata sandi sekarang" autocomplete="current-password"></div>
+<div class="row" style="margin-top:8px"><input id="pw1" type="password" maxlength="40" placeholder="Kata sandi baru (minimal 6)" autocomplete="new-password"><button class="go" id="spw" style="flex:none;min-width:0">Simpan</button></div></div>
+<h3 style="margin-top:14px">Akun Google</h3>
+<p class="mut" id="gst"></p>
+<button class="go alt" id="glink" style="width:100%"><span class="gic">G</span> Hubungkan akun Google</button>
+<p class="fb" id="am" aria-live="polite"></p>
+<button class="go alt" id="aback" style="width:100%">Kembali</button></div>
+</section>
 <section id="lvl" hidden>
 <div class="lvtop"><button id="back" class="hm" aria-label="Kembali ke daftar level"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="#fff" d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg></button><span class="lvpill"><span class="ps">★</span><span><b id="lp1">Level 1</b><small id="lp2"></small></span></span></div>
 <div class="lvban"><div class="boy" id="boy"></div><div class="lbt"><h2 id="lt"></h2><p id="ld" class="mut"></p></div><span class="bst">★</span></div>
@@ -350,7 +379,7 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,deleteUser} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,deleteUser,GoogleAuthProvider,signInWithPopup,linkWithPopup,sendPasswordResetEmail,reauthenticateWithCredential,EmailAuthProvider,updatePassword} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {getFirestore,doc,getDoc,setDoc,deleteDoc,updateDoc,collection,query,orderBy,limit,getDocs,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 /* ===== PENGATURAN SEKOLAH: ganti hanya bagian ini untuk tiap sekolah ===== */
 const NAMA_SEKOLAH='';   /* opsional, contoh: 'SD Harapan Bangsa' */
@@ -410,6 +439,11 @@ let T=false,G=false,reg=false,P=null,cur='',uid='',pn='',NM={};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
 const open_=i=>T||G||i<=(P?P.max:0);
 const em=u=>u.toLowerCase().replace(/[^a-z0-9]/g,'')+'@pemain.frame10.app';
+const DAY=864e5,FAKE='@pemain.frame10.app',hk=u=>u.toLowerCase().replace(/[^a-z0-9]/g,''),isMail=n=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(n.trim()),emOf=n=>isMail(n)?n.trim().toLowerCase():em(n);
+const fmtD=t=>new Date(t).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+const waH=t=>{const n=(typeof WA_NOMOR=='string'?WA_NOMOR:'').replace(/\D/g,'');return n?'https://wa.me/'+n+'?text='+encodeURIComponent(t):''};
+const gprov=()=>new GoogleAuthProvider();
+const whoText=()=>T?'Mode guru utama: semua level terbuka':G?'Guru tamu: '+cur+', semua level terbuka':'Halo, '+cur+'!';
 const stars=r=>Object.values(r||{}).reduce((a,v)=>a+v,0);
 const msg=t=>{$('#pm').textContent=t},msg2=t=>{$('#pm2').textContent=t};
 const cl=s=>s.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -417,19 +451,23 @@ const AL='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const rnd=n=>{const a=new Uint32Array(n);crypto.getRandomValues(a);return Array.from(a,v=>AL[v%AL.length]).join('')};
 const save=async()=>{if(!uid||T||G||!P)return;try{await setDoc(doc(fs,'players',uid),{max:P.max,r:P.r,st:stars(P.r),pt:P.pt||0,gm:P.gm||0},{merge:true})}catch(e){}};
 function page(n){$('#rib').textContent='Belajar angka sambil bermain!';$('#login').hidden=n!='l';$('#daftar').hidden=n!='d';foot('halo',n=='l'?'Halo!':'Halo! Isi kodenya ya.',n=='l'?'Ayo belajar bersama Tambi.':'Kode dari guru dulu ya.')}
-function showLogin(){tok++;P=null;T=false;G=false;uid='';cur='';$('#home').hidden=true;$('#lvl').hidden=true;page('l');msg('');msg2('');$('#pw').value='';$('#pw2').value=''}
+function showLogin(){tok++;P=null;T=false;G=false;uid='';cur='';$('#akun').hidden=true;$('#lupa').hidden=true;$('#home').hidden=true;$('#lvl').hidden=true;page('l');msg('');msg2('');$('#pw').value='';$('#pw2').value=''}
 async function loadMe(u){uid=u.uid;const r=doc(fs,'players',uid);const d=await getDoc(r);
-if(!d.exists()){try{await deleteUser(u)}catch(e){await signOut(auth)}setTimeout(()=>{page('l');msg('Akunmu sudah dihapus oleh guru. Daftar lagi dengan kode baru.')},500);return}
-const x=d.data();P={max:x.max||0,r:x.r||null,pt:x.pt||0,gm:x.gm||0};if(!P.r){P.r={};for(let i=0;i<P.max;i++)P.r[i]=10}T=x.guru===true;G=!T&&x.guruLuar===true;cur=x.nama||'pemain';enter()}
+if(!d.exists()){const gg=u.providerData.some(p=>p.providerId=='google.com');try{await deleteUser(u)}catch(e){await signOut(auth)}setTimeout(()=>{page('l');msg(gg?'Akun Google ini belum terdaftar. Daftar dulu dengan kode, atau masuk dengan nama dan kata sandi lalu hubungkan Google di menu Akun.':'Akunmu sudah dihapus oleh guru. Daftar lagi dengan kode baru.')},500);return}
+const x=d.data();
+if(x.exp&&Date.now()>x.exp){await signOut(auth);setTimeout(()=>{page('l');msg('Masa aktif akunmu sudah habis ('+fmtD(x.exp)+'). Hubungi guru untuk memperpanjang.')},500);return}
+P={max:x.max||0,r:x.r||null,pt:x.pt||0,gm:x.gm||0,exp:x.exp||0,hk:x.hk||''};if(!P.r){P.r={};for(let i=0;i<P.max;i++)P.r[i]=10}
+if(!P.hk&&u.email&&u.email.endsWith(FAKE)){const k=u.email.split('@')[0];try{const b=writeBatch(fs);b.set(doc(fs,'handles',k),{uid:u.uid,e:u.email});b.update(r,{hk:k});await b.commit();P.hk=k}catch(e){}}
+T=x.guru===true;G=!T&&x.guruLuar===true;cur=x.nama||'pemain';enter()}
 function enter(){tok++;pts=(P&&P.pt)||0;gem=(P&&P.gm)||0;streak=0;$('#rib').textContent='Modul dan permainan '+ORD.length+' level untuk PAUD dan TK A/B';$('#login').hidden=true;$('#daftar').hidden=true;$('#lvl').hidden=true;$('#home').hidden=false;
-$('#who').textContent=T?'Mode guru utama: semua level terbuka':G?'Guru tamu: '+cur+', semua level terbuka':'Halo, '+cur+'!';$('#out').textContent='Keluar';
+$('#who').textContent=whoText();$('#akun').hidden=true;renderExp();$('#out').textContent='Keluar';
 $('#tp').hidden=!T;$('#ap').hidden=!T;renderGrid();renderStats();if(T)manage().then(panel);scrollTo(0,0)}
 async function board(){try{const q=await getDocs(query(collection(fs,'players'),orderBy('st','desc'),limit(30)));
 const n=q.docs.map(d=>({id:d.id,...d.data()})).filter(x=>!x.guru&&!x.guruLuar).sort((a,b)=>(b.st||0)-(a.st||0)||(b.max||0)-(a.max||0)).slice(0,10);
 $('#lb').innerHTML=n.length?n.map((r,i)=>`<div class="mg" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>${['\u{1F947}','\u{1F948}','\u{1F949}'][i]||(i+1)+'.'} <b>${esc(r.nama||'?')}</b>${r.siswaLuar?' (luar kelas)':''}${r.id==uid?' (kamu)':''}</span><span>Level ${LB[Math.min(r.max||0,LB.length-1)]}, \u2B50 ${r.st||0}</span></div><div class="bar" style="margin:4px 0 0"><div style="width:${Math.round((r.max||0)/(ORD.length-1)*100)}%"></div></div></div>`).join(''):'<p class="mut">Belum ada pemain.</p>'}catch(e){$('#lb').innerHTML='<p class="mut">Papan peringkat belum bisa dimuat.</p>'}}
 async function manage(){try{const q=await getDocs(query(collection(fs,'players'),orderBy('st','desc'),limit(100)));NM={};q.docs.forEach(d=>{NM[d.id]=d.data().nama||'?'});
-$('#mg').innerHTML=q.docs.filter(d=>!d.data().guru).map(d=>{const x=d.data();return`<div class="mg"><span>${esc(x.nama||'?')}${x.guruLuar?' (guru tamu)':x.siswaLuar?' (luar kelas)':''}: level terbuka ${(x.max||0)+1}</span><span><button data-k="r" data-u="${d.id}">Reset</button> <button data-k="d" data-u="${d.id}">Hapus</button></span></div>`}).join('')||'<p class="mut">Belum ada pemain.</p>';
-document.querySelectorAll('#mg button').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Yakin?';return}const r=doc(fs,'players',b.dataset.u);try{if(b.dataset.k=='d')await deleteDoc(r);else await updateDoc(r,{max:0,r:{},st:0,pt:0,gm:0})}catch(e){}manage().then(panel);board()})}catch(e){$('#mg').innerHTML='<p class="mut">Gagal memuat daftar.</p>'}}
+$('#mg').innerHTML=q.docs.filter(d=>!d.data().guru).map(d=>{const x=d.data();return`<div class="mg"><span>${esc(x.nama||'?')}${x.guruLuar?' (guru tamu)':x.siswaLuar?' (luar kelas)':''}: level terbuka ${(x.max||0)+1}${x.exp?'<br><small>aktif sampai '+fmtD(x.exp)+'</small>':''}</span><span>${x.exp?`<button data-k="x" data-u="${d.id}" data-e="${x.exp}">+1 th</button> `:''}<button data-k="r" data-u="${d.id}">Reset</button> <button data-k="d" data-u="${d.id}">Hapus</button></span></div>`}).join('')||'<p class="mut">Belum ada pemain.</p>';
+document.querySelectorAll('#mg button').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Yakin?';return}const r=doc(fs,'players',b.dataset.u);try{if(b.dataset.k=='d')await deleteDoc(r);else if(b.dataset.k=='x')await updateDoc(r,{exp:Math.max(+b.dataset.e,Date.now())+365*DAY});else await updateDoc(r,{max:0,r:{},st:0,pt:0,gm:0})}catch(e){}manage().then(panel);board()})}catch(e){$('#mg').innerHTML='<p class="mut">Gagal memuat daftar.</p>'}}
 async function panel(){try{const k=await getDoc(doc(fs,'config','kelas'));$('#tk').value=k.exists()?k.data().kode:''}catch(e){}
 try{const q=await getDocs(query(collection(fs,'kode'),orderBy('dibuat','desc'),limit(50)));
 $('#kl').innerHTML=q.docs.map(d=>{const x=d.data();return`<div class="mg"><span><b>${esc(d.id)}</b> ${x.tipe=='guru'?'guru lain':'siswa luar kelas'}<br><small>${x.dipakai?'Sudah dipakai'+(NM[x.oleh]?' oleh '+esc(NM[x.oleh]):''):'Belum dipakai'}</small></span><span><button data-c="${esc(d.id)}">Salin</button> <button data-x="${esc(d.id)}">Hapus</button></span></div>`}).join('')||'<p class="mut">Belum ada kode sekali pakai.</p>';
@@ -439,19 +477,47 @@ async function mkKode(t){sClick();const c=rnd(8);try{await setDoc(doc(fs,'kode',
 $('#mkg').onclick=()=>mkKode('guru');$('#mkl').onclick=()=>mkKode('luar');
 $('#atk').onclick=()=>{sClick();$('#tk').value=rnd(10)};
 $('#stk').onclick=async()=>{const v=cl($('#tk').value);if(v.length<6){$('#ak').textContent='Kode kelas minimal 6 huruf atau angka.';return}sClick();try{await setDoc(doc(fs,'config','kelas'),{kode:v});$('#tk').value=v;$('#ak').textContent='Kode kelas disimpan: '+v}catch(e){$('#ak').textContent='Gagal menyimpan kode kelas.'}};
-$('#log').onclick=async()=>{const n=$('#nm').value.trim(),p=$('#pw').value;if(!n||!p){msg('Isi nama dan kata sandi.');return}sClick();msg('Memeriksa...');try{await signInWithEmailAndPassword(auth,em(n),p)}catch(e){sOops();msg('Nama atau kata sandi salah.')}};
-$('#reg').onclick=async()=>{const n=$('#nm2').value.trim().slice(0,14),p=$('#pw2').value,tp=document.querySelector('input[name=jenis]:checked').value,k=cl($('#kg').value);
-if(em(n).length<22){msg2('Nama minimal 3 huruf atau angka.');return}if(p.length<6){msg2('Kata sandi minimal 6 karakter.');return}if(k.length<6){msg2('Isi kode pendaftaran dari guru.');return}
-sClick();msg2('Membuat akun...');reg=true;
-try{const c=await createUserWithEmailAndPassword(auth,em(n),p),u=c.user;
-try{const b=writeBatch(fs);b.set(doc(fs,'claims',u.uid),{tipe:tp,kode:k});if(tp!='kelas')b.update(doc(fs,'kode',k),{dipakai:true,oleh:u.uid});
-b.set(doc(fs,'players',u.uid),{nama:n,max:0,s:{},st:0,guru:false,guruLuar:tp=='guru',siswaLuar:tp=='luar'});await b.commit()}
-catch(e){try{await deleteUser(u)}catch(_){}reg=false;sOops();setTimeout(()=>{page('d');msg2('Kode salah atau sudah dipakai. Akun belum dibuat, silakan coba lagi.')},500);return}
+$('#log').onclick=async()=>{const n=$('#nm').value.trim(),p=$('#pw').value;if(!n||!p){msg('Isi nama dan kata sandi.');return}sClick();msg('Memeriksa...');try{await signInWithEmailAndPassword(auth,await resolveEmail(n),p)}catch(e){sOops();msg('Nama atau kata sandi salah.')}};
+async function resolveEmail(n){if(isMail(n))return n.trim().toLowerCase();try{const d=await getDoc(doc(fs,'handles',hk(n)));if(d.exists()&&d.data().e)return d.data().e}catch(e){}return em(n)}
+async function makePlayer(u,tp,k,nama,key){const b=writeBatch(fs);b.set(doc(fs,'claims',u.uid),{tipe:tp,kode:k});if(tp!='kelas')b.update(doc(fs,'kode',k),{dipakai:true,oleh:u.uid});
+const d={nama,max:0,r:{},st:0,pt:0,gm:0,guru:false,guruLuar:tp=='guru',siswaLuar:tp=='luar'};if(tp!='kelas')d.exp=Date.now()+365*DAY;if(key){d.hk=key;b.set(doc(fs,'handles',key),{uid:u.uid,e:u.email})}
+b.set(doc(fs,'players',u.uid),d);await b.commit()}
+const jenis=()=>document.querySelector('input[name=jenis]:checked').value;
+$('#reg').onclick=async()=>{const n=$('#nm2').value.trim(),p=$('#pw2').value,tp=jenis(),k=cl($('#kg').value),mail=isMail(n);
+if(!mail&&em(n).length<22){msg2('Nama minimal 3 huruf atau angka, atau tulis alamat email.');return}if(p.length<6){msg2('Kata sandi minimal 6 karakter.');return}if(k.length<6){msg2('Isi kode pendaftaran dari guru.');return}
+const nama=(mail?n.split('@')[0]:n).slice(0,14);sClick();msg2('Membuat akun...');reg=true;
+try{const c=await createUserWithEmailAndPassword(auth,emOf(n),p),u=c.user;
+try{await makePlayer(u,tp,k,nama,mail?'':hk(n))}
+catch(e){try{await deleteUser(u)}catch(_){}reg=false;sOops();setTimeout(()=>{page('d');msg2('Kode salah atau sudah dipakai (atau nama sudah dipakai). Akun belum dibuat, silakan coba lagi.')},500);return}
 reg=false;await loadMe(u)}
 catch(e){reg=false;sOops();msg2(e.code=='auth/email-already-in-use'?'Nama ini sudah dipakai. Pilih nama lain.':'Gagal mendaftar. Periksa internet lalu coba lagi.')}};
+$('#greg').onclick=async()=>{const tp=jenis(),k=cl($('#kg').value),n0=$('#nm2').value.trim();if(k.length<6){msg2('Isi kode pendaftaran dari guru.');return}sClick();msg2('Membuka Google...');reg=true;let u;
+try{u=(await signInWithPopup(auth,gprov())).user}catch(e){reg=false;sOops();msg2(e.code=='auth/popup-closed-by-user'?'':'Gagal membuka Google. Izinkan pop-up dan pastikan domain game diizinkan di Firebase.');return}
+try{const ex=await getDoc(doc(fs,'players',u.uid));if(!ex.exists())await makePlayer(u,tp,k,(isMail(n0)?n0.split('@')[0]:n0||(u.displayName||'pemain').split(' ')[0]).slice(0,14),'')}
+catch(e){try{await deleteUser(u)}catch(_){await signOut(auth)}reg=false;sOops();setTimeout(()=>{page('d');msg2('Kode salah atau sudah dipakai. Akun belum dibuat, silakan coba lagi.')},500);return}
+reg=false;await loadMe(u)};
+$('#glog').onclick=async()=>{sClick();msg('Membuka Google...');try{await signInWithPopup(auth,gprov())}catch(e){sOops();msg(e.code=='auth/popup-closed-by-user'?'':e.code=='auth/popup-blocked'?'Pop-up diblokir. Izinkan pop-up lalu coba lagi.':'Gagal masuk dengan Google. Pastikan domain game sudah diizinkan di Firebase.')}};
 $('#kd').onclick=()=>{sClick();msg('');page('d')};$('#kb').onclick=()=>{sClick();msg2('');page('l')};
 $('#pw').onkeydown=e=>{if(e.key=='Enter')$('#log').click()};
 $('#out').onclick=()=>{sClick();signOut(auth)};
+function renderExp(){const e=$('#exb');if(!e)return;if(!P||!P.exp){e.innerHTML='';return}const d=Math.max(0,Math.ceil((P.exp-Date.now())/DAY)),c=d<=7?'ur':d<=30?'wr':'ok',h=d<=30?waH("Assalammu'alaikum saya ingin memperpanjang masa aktif akun frame sepuluh seru, nama pengguna: "+cur):'';
+e.innerHTML=`<div class="exb ${c}">\u23F3 Masa aktif akunmu tinggal <b>${d}</b> hari lagi (sampai ${fmtD(P.exp)}).${h?` <a href="${h}" target="_blank" rel="noopener">Perpanjang lewat WhatsApp</a>`:''}</div>`}
+const am=t=>{$('#am').textContent=t};
+function showAkun(){sClick();const u=auth.currentUser;if(!u)return;$('#home').hidden=true;$('#akun').hidden=false;const pv=u.providerData.map(p=>p.providerId),hasPw=pv.includes('password'),hasG=pv.includes('google.com');
+$('#ainfo').textContent='Nama: '+cur+(hasPw?'':'. Kamu masuk lewat Google.');$('#pwbox').hidden=!hasPw;$('#glink').hidden=hasG;
+$('#gst').textContent=hasG?'Google sudah terhubung. Kamu bisa masuk dengan Google, dan jika lupa kata sandi masuk lewat Google lalu ganti kata sandinya di sini.':'Belum terhubung. Hubungkan agar bisa masuk dengan Google dan memulihkan akun jika lupa kata sandi.';
+$('#un').value='';$('#pw0').value='';$('#pw1').value='';am('');scrollTo(0,0)}
+$('#set').onclick=showAkun;$('#aback').onclick=()=>{sClick();$('#akun').hidden=true;$('#home').hidden=false};
+$('#sun').onclick=async()=>{const u=auth.currentUser;let n=$('#un').value.trim();if(!u)return;const fk=!!(u.email&&u.email.endsWith(FAKE));
+if(fk&&hk(n).length<3){am('Nama minimal 3 huruf atau angka.');return}if(!fk&&n.length<2){am('Nama terlalu pendek.');return}sClick();n=n.slice(0,14);
+try{if(fk){const k=hk(n);if(k==P.hk){await updateDoc(doc(fs,'players',uid),{nama:n})}else{const b=writeBatch(fs);b.set(doc(fs,'handles',k),{uid,e:u.email});if(P.hk)b.delete(doc(fs,'handles',P.hk));b.update(doc(fs,'players',uid),{nama:n,hk:k});await b.commit();P.hk=k}}else await updateDoc(doc(fs,'players',uid),{nama:n});
+cur=n;$('#who').textContent=whoText();$('#ainfo').textContent='Nama: '+cur;$('#un').value='';am('Nama pengguna diubah menjadi '+n+'. Masuk berikutnya pakai nama ini.')}catch(e){sOops();am('Gagal. Nama itu mungkin sudah dipakai orang lain.')}};
+$('#spw').onclick=async()=>{const u=auth.currentUser,p0=$('#pw0').value,p1=$('#pw1').value;if(!u||!u.email)return;if(p1.length<6){am('Kata sandi baru minimal 6 karakter.');return}sClick();
+try{await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,p0));await updatePassword(u,p1);$('#pw0').value='';$('#pw1').value='';am('Kata sandi berhasil diubah.')}catch(e){sOops();am(e.code=='auth/wrong-password'||e.code=='auth/invalid-credential'?'Kata sandi sekarang salah.':'Gagal mengubah kata sandi. Coba lagi.')}};
+$('#glink').onclick=async()=>{const u=auth.currentUser;if(!u)return;sClick();try{await linkWithPopup(u,gprov());showAkun();am('Akun Google berhasil dihubungkan.')}catch(e){sOops();am(e.code=='auth/credential-already-in-use'?'Akun Google itu sudah dipakai akun lain.':e.code=='auth/popup-closed-by-user'?'':'Gagal menghubungkan Google. Izinkan pop-up dan pastikan domain game diizinkan di Firebase.')}};
+$('#lupab').onclick=()=>{sClick();$('#lupa').hidden=!$('#lupa').hidden};
+$('#lsend').onclick=async()=>{const e=$('#lem').value.trim();if(!isMail(e)){msg('Tulis alamat email yang benar.');return}sClick();try{await sendPasswordResetEmail(auth,e);msg('Jika email itu terdaftar, tautan reset sudah dikirim. Cek kotak masuk dan folder spam.')}catch(x){msg('Gagal mengirim. Periksa email dan internet.')}};
+{const lw=$('#lupawa');if(lw&&!waH('x'))lw.hidden=true}
 onAuthStateChanged(auth,u=>{if(u){if(!reg)loadMe(u).catch(()=>{msg('Gagal memuat data. Periksa internet.');signOut(auth)})}else showLogin()});
 /* ===== Tambi, suara baru, dan suasana ===== */
 const DOT=['#FFC93C','#4DB5FF','#8E3FB0','#3DB86B','#FF8A73'],NV='#2B2A5C',RD='#E8504F';
@@ -494,7 +560,7 @@ const boy=()=>`<svg class="tm" viewBox="0 0 120 124" aria-hidden="true"><g class
 $('#boy').innerHTML=boy();$('#n10').innerHTML=num10();
 (()=>{const n=(typeof WA_NOMOR=='string'?WA_NOMOR:'').replace(/\D/g,'');if(!n){document.querySelectorAll('.wacard').forEach(x=>{x.hidden=true});return}
 const h='https://wa.me/'+n+'?text='+encodeURIComponent("Assalammu'alaikum saya ingin mendaftar akun frame sepuluh seru, boleh minta kode referalnya");
-document.querySelectorAll('[data-wa]').forEach(a=>{a.href=h});document.querySelectorAll('.wan').forEach(x=>{x.textContent=WA_NAMA||'admin'});
+document.querySelectorAll('[data-wa]').forEach(a=>{a.href=a.dataset.wa=='lupa'?waH("Assalammu'alaikum saya lupa kata sandi akun frame sepuluh seru, mohon bantuannya"):h});document.querySelectorAll('.wan').forEach(x=>{x.textContent=WA_NAMA||'admin'});
 document.querySelectorAll('.wno').forEach(x=>{x.textContent=(n.startsWith('62')?'0'+n.slice(2):n).replace(/(\d{4})(?=\d)/g,'$1-')+(WA_NAMA?' ('+WA_NAMA+')':'')})})();
 const lvIc=t=>/Pasangan/.test(t)?'<svg viewBox="0 0 64 26" width="60" height="26" aria-hidden="true"><rect x="1" y="1" width="29" height="24" rx="5" fill="#fff" stroke="#2B2A5C" stroke-width="2"/><circle cx="8" cy="9" r="3.5" fill="#4DB5FF"/><circle cx="16" cy="9" r="3.5" fill="#4DB5FF"/><circle cx="24" cy="9" r="3.5" fill="#4DB5FF"/><rect x="34" y="1" width="29" height="24" rx="5" fill="#fff" stroke="#2B2A5C" stroke-width="2"/><circle cx="42" cy="9" r="3.5" fill="#FF6B5B"/><circle cx="50" cy="9" r="3.5" fill="#FF6B5B"/></svg>':/Mengenal/.test(t)?'\u{1F7E1}\u{1F534}':/Menambah/.test(t)?'\u{1F34E}+\u{1F34E}':/Mengurangi dasar/.test(t)?'\u{1F425}\u{1F425}\u2212\u{1F425}':/Campur|Tantangan/.test(t)?'\u{1F500}':/Penjumlahan/.test(t)?'\u2795':/Pengurangan/.test(t)?'\u2796':/bawah/.test(t)?'\u2B07\uFE0F':'\u{1F522}';
 function renderGrid(){const N=ORD.length,all=T||G||showAll,vis=all?N:Math.min(N,Math.max(6,(P?P.max:0)+2));let h='';
@@ -637,4 +703,65 @@ if(P&&!T&&!G&&passed){if(rd>(P.r[lv]||0))P.r[lv]=rd;if(rd==10&&lv==P.max&&lv<ORD
 if(T||G)m=passed?'Lolos!':'Mode guru: semua ronde dan level tetap terbuka.';
 $('#fb').textContent=m;sClap();mood(passed?'hore':'halo');ui();saveSoon()}
 $('#start').onclick=()=>{sClick();startRound(mode=='end'?rd:nextRound())};
-$('#nr').onclick=()=>{sClick();st
+$('#nr').onclick=()=>{sClick();startRound(rd+1)};
+
+function fillSlot(i){const s=$('#qv .slot'),b=$('#qc').children[i];if(!s||!b||b.disabled||lock||Q.ty!='ch')return;sPop(3);Q.sel=i;s.innerHTML=Q.ch[i].h;s.classList.add('filled');[...$('#qc').children].forEach((x,j)=>x.classList.toggle('used',j==i));ui()}
+function clearSlot(){const s=$('#qv .slot');if(!s)return;Q.sel=-1;s.innerHTML='?';s.classList.remove('filled');[...$('#qc').children].forEach(x=>x.classList.remove('used'));tone(260,.1,'sine',.15,0,160);ui()}
+addEventListener('pointerdown',e=>{if(mode!='play'||lock||!Q||Q.ty!='ch')return;const c=e.target.closest('.chb'),s=e.target.closest('.slot.filled');if(!c&&!s)return;if(c&&c.disabled)return;e.preventDefault();sd={from:c?+c.dataset.i:'slot',x:e.clientX,y:e.clientY,g:null,html:c?c.innerHTML:s.innerHTML}});
+addEventListener('pointermove',e=>{if(!sd)return;if(!sd.g&&Math.hypot(e.clientX-sd.x,e.clientY-sd.y)>8){const g=document.createElement('div');g.className='ghost';g.innerHTML=sd.html;document.body.append(g);sd.g=g}if(sd.g){sd.g.style.left=e.clientX+'px';sd.g.style.top=e.clientY+'px'}});
+addEventListener('pointerup',e=>{if(!sd)return;const d=sd;sd=null;if(!d.g){if(d.from=='slot')clearSlot();else fillSlot(d.from)}else{const el=document.elementFromPoint(e.clientX,e.clientY),over=el&&el.closest&&el.closest('.slot');d.g.remove();if(d.from=='slot'){if(!over)clearSlot()}else if(over)fillSlot(d.from)}});
+addEventListener('pointercancel',()=>{if(sd){if(sd.g)sd.g.remove();sd=null}});
+
+/* soal */
+const arr=(F,n,em)=>Array.from({length:F*10},(_,i)=>i<n?em:'');
+function mk(l,i){let e=E[R(0,7)],e2=E[R(0,7)],a,b,t,n,q;while(e2==e)e2=E[R(0,7)];
+const add=()=>{a=R(1,5);b=R(1,10-a);return{F:1,init:arr(1,a,e),e,tr:e2,target:a+b,text:`${a} ${e} ditambah ${b} ${e2}. Pindahkan ${b} ${e2} ke frame!`,eq:`${a} + ${b} = ${a+b} 🎉`}};
+const sub=()=>{a=R(3,10);b=R(1,a-1);return{F:1,init:arr(1,a,e),e,tr:null,target:a-b,text:`Ada ${a} ${e}. Ambil keluar ${b} ${e}!`,eq:`${a} − ${b} = ${a-b} 🎉`}};
+if(typeof l=='string'){const N=+l.slice(1),F=Math.ceil(N/10);b=R(1,Math.min(9,N-1));a=N-b;return{F,init:arr(F,a,e),e,tr:e2,target:N,text:`${a} + ? = ${N}. Isi sampai jadi ${N}!`,eq:`${a} + ${b} = ${N} 🎉`}}
+if(l==0){n=R(1,i<3?5:10);return{F:1,init:arr(1,0,e),e,tr:e,target:n,text:`Taruh ${n} ${e} di dalam frame.`,eq:`${n} ${e} 🎉`}}
+if(l==1)return add();if(l==2)return sub();if(l==3)return R(0,1)?add():sub();
+if(l==4){a=R(1,9);return{F:1,init:arr(1,a,e),e,tr:e2,target:10,text:`${a} + ? = 10. Isi sampai frame penuh!`,eq:`${a} + ${10-a} = 10 🎉`}}
+if(l==5){b=R(1,9);return{F:1,init:arr(1,10,e),e,tr:null,target:10-b,text:`10 − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`10 − ${b} = ${10-b} 🎉`}}
+if(l==6){if(R(0,1)){n=R(1,9);return{F:2,init:arr(2,10,e),e,tr:e2,target:10+n,text:`10 + ${n} = ? Taruh ${n} ${e2} di frame kedua.`,eq:`10 + ${n} = ${10+n} 🎉`}}
+a=R(6,9);b=R(11-a,9);return{F:2,init:arr(2,a,e),e,tr:e2,target:a+b,text:`${a} + ${b} = ? Isi frame pertama sampai penuh dulu.`,eq:`${a} + ${b} = ${a+b} 🎉`}}
+let r,k;if(l==22){r=R(1,4);const lo=r*10,hi=lo+10;a=R(lo,hi-1);b=R(1,Math.min(9,hi-a));const c=R(1,Math.min(9,a+b-1));return{F:hi/10,init:arr(hi/10,a,e),e,tr:e2,target:a+b-c,text:`${a} + ${b} − ${c} = ? Tambah ${b} ${e2}, lalu ambil ${c}.`,eq:`${a} + ${b} − ${c} = ${a+b-c} 🎉`}}
+if(l<10){r=1;k=['sub','below','mix'][l-7]}else{r=2+Math.floor((l-10)/4);k=['add','sub','below','mix'][(l-10)%4]}
+if(k=='mix')k=R(0,1)?'add':'sub';
+const lo=r*10,hi=lo+10,F=hi/10;
+if(k=='add'){a=R(lo,hi-1);b=R(1,Math.min(9,hi-a));return{F,init:arr(F,a,e),e,tr:e2,target:a+b,text:`${a} + ${b} = ? Tambahkan ${b} ${e2}.`,eq:`${a} + ${b} = ${a+b} 🎉`}}
+if(k=='sub'){a=R(lo+1,hi);b=R(1,9);return{F,init:arr(F,a,e),e,tr:null,target:a-b,text:`${a} − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`${a} − ${b} = ${a-b} 🎉`}}
+b=R(1,9);return{F,init:arr(F,hi,e),e,tr:null,target:hi-b,text:`${hi} − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`${hi} − ${b} = ${hi-b} 🎉`}}
+const cnt=()=>cells.filter(Boolean).length;
+function draw(){let h='';for(let f=0;f<Q.F;f++){h+=`<div class="frame${Q.F>2?' sm':''}">`;for(let k=0;k<10;k++){const i=f*10+k,c=cells[i];h+=`<div class="cell" data-i="${i}">${c?`<span class="ct${i==last?' pop':''}" data-i="${i}" tabindex="0">${c}</span>`:''}</div>`}h+='</div>'}
+$('#fr').innerHTML=h;$('#cnt').textContent='Ada: '+cnt();
+$('#tray').innerHTML=mode=='play'?`<div class="src" tabindex="0" role="button" aria-label="Tambah benda ke frame">${Q.tr||Q.e}</div><span class="mut">${Q.tr?'Seret ke frame atau ketuk':'Terambil terlalu banyak? Seret ke frame untuk menambah lagi'}</span>`:''}
+/* contoh bergerak */
+async function demo(){const my=++tok;mode='demo';lock=false;mood('halo');Q=mk(ORD[lv],0);cells=[...Q.init];last=-1;ui();$('#fb').textContent='';$('#lx').textContent='Contoh: '+Q.text;draw();await sl(1100);
+const c0=cnt(),up=Q.target>c0,idx=[];
+if(up){for(let i=0;i<cells.length&&idx.length<Q.target-c0;i++)if(!cells[i])idx.push(i)}else{for(let i=cells.length-1;i>=0&&idx.length<c0-Q.target;i--)if(cells[i])idx.push(i)}
+for(const i of idx){if(my!=tok)return;cells[i]=up?(Q.tr||Q.e):'';last=i;sPop(cnt());draw();say(cnt());await sl(900)}
+if(my!=tok)return;$('#lx').textContent=Q.eq;sCheer();mood('hore');$('#fb').textContent='Sekarang giliranmu! Pilih ronde di bawah, atau tekan Mulai.'}
+function openLv(i){if(!open_(i))return;lv=i;$('#home').hidden=true;$('#lvl').hidden=false;const l=info(i);$('#lp1').textContent='Level '+LB[i];$('#lp2').textContent=l[0];$('#lt').textContent=`Level ${LB[i]}: ${l[0]}`;$('#ld').textContent=`${l[1]}. ${l[2]}`;$('#tip').textContent=l[3];scrollTo(0,0);rpick();demo()}
+$('#rep').onclick=()=>{sClick();demo()};
+$('#nl').onclick=()=>{sClick();openLv(lv+1)};
+$('#back').onclick=()=>{sClick();tok++;$('#lvl').hidden=true;$('#home').hidden=false;renderGrid()};
+/* geser dan ketuk */
+function empty(f){const lo=f>=0?f*10:0,hi=f>=0?lo+10:cells.length;for(let i=lo;i<hi;i++)if(!cells[i])return i;for(let i=0;i<cells.length;i++)if(!cells[i])return i;return -1}
+function put(i,em){cells[i]=em;last=i;sPop(cnt());say(cnt())}
+function del(i){cells[i]='';last=-1;tone(260,.12,'sine',.18,0,160);say(cnt())}
+addEventListener('pointerdown',e=>{const t=e.target.closest('.ct,.src');if(!t||mode!='play'||lock)return;e.preventDefault();drag={from:t.classList.contains('src')?-1:+t.dataset.i,x:e.clientX,y:e.clientY,em:t.textContent,g:null}});
+addEventListener('pointermove',e=>{if(!drag)return;if(!drag.g&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){const g=document.createElement('div');g.className='ghost';g.textContent=drag.em;document.body.append(g);drag.g=g;if(drag.from>=0){cells[drag.from]='';last=-1;draw()}}
+if(drag&&drag.g){drag.g.style.left=e.clientX+'px';drag.g.style.top=e.clientY+'px'}});
+addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;
+if(!d.g){if(d.from<0){const i=empty(-1);if(i>=0)put(i,d.em)}else del(d.from)}
+else{const el=document.elementFromPoint(e.clientX,e.clientY),c=el&&el.closest('.cell');d.g.remove();
+if(c){let i=+c.dataset.i;if(cells[i])i=empty(Math.floor(i/10));if(i>=0)put(i,d.em);else if(d.from>=0)cells[d.from]=d.em}
+else if(d.from>=0)del(d.from)}
+draw()});
+addEventListener('pointercancel',()=>{if(drag){if(drag.g)drag.g.remove();drag=null;if(mode=='play')draw()}});
+addEventListener('keydown',e=>{if(e.key!='Enter'&&e.key!=' ')return;const t=e.target;if(mode!='play'||lock)return;
+if(t.classList&&t.classList.contains('src')){e.preventDefault();const i=empty(-1);if(i>=0){put(i,Q.tr||Q.e);draw()}}
+else if(t.classList&&t.classList.contains('ct')){e.preventDefault();del(+t.dataset.i);draw()}});
+</script>
+</body>
+</html>
