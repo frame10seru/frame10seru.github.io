@@ -239,6 +239,21 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 .rb b{display:block;font-size:1.3rem;line-height:1.1}
 .rb.dn{background:#DDF7E8}.rb.nx{background:#FFF1B8;border-color:#E0A020}.rb.lk{opacity:.55;background:#EEE}
 
+/* ===== poin, permata, kotak jawaban ===== */
+.pts{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 8px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:6px 10px;margin:8px 0}
+.pc{font-weight:800;background:#F3EBFF;border-radius:999px;padding:2px 10px;white-space:nowrap;font-size:.9rem}.pc b{font:800 1.15rem "Baloo 2",sans-serif}
+.pbar{flex:1 1 100%;height:10px;border-radius:8px;background:#E4D7FF;overflow:hidden}.pbar div{height:100%;background:linear-gradient(90deg,#FFC93C,#FF8FC7);transition:width .4s}
+.xchg{flex:1 1 100%;font:800 .95rem "Baloo 2",sans-serif;padding:4px 10px;border-radius:12px;border:2px solid var(--ink);background:#EEE;color:var(--ink)}
+.xchg.rdy{background:#5BE0A3;animation:tpl 1s infinite}
+.ptpop{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:80;font:800 1.6rem "Baloo 2",sans-serif;padding:4px 16px;border-radius:999px;border:3px solid var(--ink);background:#fff;pointer-events:none;animation:rise 1.1s ease-out forwards}
+.ptpop.g{color:#16803C}.ptpop.m{color:#C2255C}
+@keyframes rise{from{opacity:0;transform:translate(-50%,10px)}15%{opacity:1}to{opacity:0;transform:translate(-50%,-30px)}}
+.aslot{display:flex;align-items:center;justify-content:center;min-width:120px;min-height:62px;margin:8px auto;border:3px dashed var(--ink);border-radius:16px;background:#FFF1B8;font:800 1.7rem "Baloo 2",sans-serif;padding:4px 18px;width:fit-content}
+.slot.filled{background:#DDF7E8;border-style:solid;cursor:grab;touch-action:none}
+.mqb.slot{min-width:56px;padding:0 10px}.cmp i.slot{font-style:normal}
+.chb.dr{touch-action:none;cursor:grab}.chb.used{opacity:.45}
+.gtog.lk{background:#EEE;border-color:#999}
+.gwrap{margin:12px 0 4px}
 </style>
 </head>
 <body>
@@ -288,6 +303,7 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 </section>
 <section id="home" hidden>
 <div class="who"><div><div class="wh" id="who"></div><div class="mut">Pilih level, lalu ayo main!</div></div><button class="go alt" id="out">Keluar</button></div>
+<div id="st1"></div>
 <div class="grid" id="grid"></div>
 <div class="card"><h3>Papan peringkat 🏆</h3><div id="lb"></div></div>
 <div class="card" id="ap" hidden><h3>Panel kode (admin)</h3>
@@ -306,10 +322,10 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <div class="lvtop"><button id="back" class="hm" aria-label="Kembali ke daftar level"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="#fff" d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg></button><span class="lvpill"><span class="ps">★</span><span><b id="lp1">Level 1</b><small id="lp2"></small></span></span></div>
 <div class="lvban"><div class="boy" id="boy"></div><div class="lbt"><h2 id="lt"></h2><p id="ld" class="mut"></p></div><span class="bst">★</span></div>
 <div class="card play">
+<div id="st2"></div>
 <p class="mut rinfo" id="rinfo" hidden></p>
 <div class="bar" id="bar" hidden><div></div></div>
 <div class="tbrow"><div class="tbp" id="tbp"></div><p class="say" id="lx" aria-live="polite"></p></div>
-<div class="gwrap" id="gwrap" hidden><button class="gtog" id="gtog" aria-expanded="true">💡 Panduan: tutup</button><div class="gbox" id="gbox"></div></div>
 <div class="qa" id="qa" hidden><div class="qv" id="qv"></div><div class="qc" id="qc"></div></div>
 <div class="frames" id="fr"></div>
 <p class="cnt" id="cnt"></p>
@@ -324,6 +340,7 @@ body:has(#lvl:not([hidden])) .scene{height:58vh}
 <button class="go" id="nr" hidden>Ronde berikutnya</button>
 <button class="go alt" id="nl" hidden>Level berikutnya</button>
 </div>
+<div class="gwrap" id="gwrap" hidden><button class="gtog" id="gtog" aria-expanded="true">💡 Panduan: tutup</button><div class="gbox" id="gbox"></div></div>
 <details><summary>Panduan guru</summary><p id="tip" style="margin-top:6px"></p></details>
 <div class="n10" id="n10"></div>
 </div>
@@ -398,21 +415,21 @@ const msg=t=>{$('#pm').textContent=t},msg2=t=>{$('#pm2').textContent=t};
 const cl=s=>s.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
 const AL='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const rnd=n=>{const a=new Uint32Array(n);crypto.getRandomValues(a);return Array.from(a,v=>AL[v%AL.length]).join('')};
-const save=async()=>{if(!uid||T||G||!P)return;try{await setDoc(doc(fs,'players',uid),{max:P.max,r:P.r,st:stars(P.r)},{merge:true})}catch(e){}};
+const save=async()=>{if(!uid||T||G||!P)return;try{await setDoc(doc(fs,'players',uid),{max:P.max,r:P.r,st:stars(P.r),pt:P.pt||0,gm:P.gm||0},{merge:true})}catch(e){}};
 function page(n){$('#rib').textContent='Belajar angka sambil bermain!';$('#login').hidden=n!='l';$('#daftar').hidden=n!='d';foot('halo',n=='l'?'Halo!':'Halo! Isi kodenya ya.',n=='l'?'Ayo belajar bersama Tambi.':'Kode dari guru dulu ya.')}
 function showLogin(){tok++;P=null;T=false;G=false;uid='';cur='';$('#home').hidden=true;$('#lvl').hidden=true;page('l');msg('');msg2('');$('#pw').value='';$('#pw2').value=''}
 async function loadMe(u){uid=u.uid;const r=doc(fs,'players',uid);const d=await getDoc(r);
 if(!d.exists()){try{await deleteUser(u)}catch(e){await signOut(auth)}setTimeout(()=>{page('l');msg('Akunmu sudah dihapus oleh guru. Daftar lagi dengan kode baru.')},500);return}
-const x=d.data();P={max:x.max||0,r:x.r||null};if(!P.r){P.r={};for(let i=0;i<P.max;i++)P.r[i]=10}T=x.guru===true;G=!T&&x.guruLuar===true;cur=x.nama||'pemain';enter()}
-function enter(){tok++;$('#rib').textContent='Modul dan permainan '+ORD.length+' level untuk PAUD dan TK A/B';$('#login').hidden=true;$('#daftar').hidden=true;$('#lvl').hidden=true;$('#home').hidden=false;
+const x=d.data();P={max:x.max||0,r:x.r||null,pt:x.pt||0,gm:x.gm||0};if(!P.r){P.r={};for(let i=0;i<P.max;i++)P.r[i]=10}T=x.guru===true;G=!T&&x.guruLuar===true;cur=x.nama||'pemain';enter()}
+function enter(){tok++;pts=(P&&P.pt)||0;gem=(P&&P.gm)||0;streak=0;$('#rib').textContent='Modul dan permainan '+ORD.length+' level untuk PAUD dan TK A/B';$('#login').hidden=true;$('#daftar').hidden=true;$('#lvl').hidden=true;$('#home').hidden=false;
 $('#who').textContent=T?'Mode guru utama: semua level terbuka':G?'Guru tamu: '+cur+', semua level terbuka':'Halo, '+cur+'!';$('#out').textContent='Keluar';
-$('#tp').hidden=!T;$('#ap').hidden=!T;renderGrid();if(T)manage().then(panel);scrollTo(0,0)}
+$('#tp').hidden=!T;$('#ap').hidden=!T;renderGrid();renderStats();if(T)manage().then(panel);scrollTo(0,0)}
 async function board(){try{const q=await getDocs(query(collection(fs,'players'),orderBy('st','desc'),limit(30)));
 const n=q.docs.map(d=>({id:d.id,...d.data()})).filter(x=>!x.guru&&!x.guruLuar).sort((a,b)=>(b.st||0)-(a.st||0)||(b.max||0)-(a.max||0)).slice(0,10);
 $('#lb').innerHTML=n.length?n.map((r,i)=>`<div class="mg" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>${['\u{1F947}','\u{1F948}','\u{1F949}'][i]||(i+1)+'.'} <b>${esc(r.nama||'?')}</b>${r.siswaLuar?' (luar kelas)':''}${r.id==uid?' (kamu)':''}</span><span>Level ${LB[Math.min(r.max||0,LB.length-1)]}, \u2B50 ${r.st||0}</span></div><div class="bar" style="margin:4px 0 0"><div style="width:${Math.round((r.max||0)/(ORD.length-1)*100)}%"></div></div></div>`).join(''):'<p class="mut">Belum ada pemain.</p>'}catch(e){$('#lb').innerHTML='<p class="mut">Papan peringkat belum bisa dimuat.</p>'}}
 async function manage(){try{const q=await getDocs(query(collection(fs,'players'),orderBy('st','desc'),limit(100)));NM={};q.docs.forEach(d=>{NM[d.id]=d.data().nama||'?'});
 $('#mg').innerHTML=q.docs.filter(d=>!d.data().guru).map(d=>{const x=d.data();return`<div class="mg"><span>${esc(x.nama||'?')}${x.guruLuar?' (guru tamu)':x.siswaLuar?' (luar kelas)':''}: level terbuka ${(x.max||0)+1}</span><span><button data-k="r" data-u="${d.id}">Reset</button> <button data-k="d" data-u="${d.id}">Hapus</button></span></div>`}).join('')||'<p class="mut">Belum ada pemain.</p>';
-document.querySelectorAll('#mg button').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Yakin?';return}const r=doc(fs,'players',b.dataset.u);try{if(b.dataset.k=='d')await deleteDoc(r);else await updateDoc(r,{max:0,r:{},st:0})}catch(e){}manage().then(panel);board()})}catch(e){$('#mg').innerHTML='<p class="mut">Gagal memuat daftar.</p>'}}
+document.querySelectorAll('#mg button').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Yakin?';return}const r=doc(fs,'players',b.dataset.u);try{if(b.dataset.k=='d')await deleteDoc(r);else await updateDoc(r,{max:0,r:{},st:0,pt:0,gm:0})}catch(e){}manage().then(panel);board()})}catch(e){$('#mg').innerHTML='<p class="mut">Gagal memuat daftar.</p>'}}
 async function panel(){try{const k=await getDoc(doc(fs,'config','kelas'));$('#tk').value=k.exists()?k.data().kode:''}catch(e){}
 try{const q=await getDocs(query(collection(fs,'kode'),orderBy('dibuat','desc'),limit(50)));
 $('#kl').innerHTML=q.docs.map(d=>{const x=d.data();return`<div class="mg"><span><b>${esc(d.id)}</b> ${x.tipe=='guru'?'guru lain':'siswa luar kelas'}<br><small>${x.dipakai?'Sudah dipakai'+(NM[x.oleh]?' oleh '+esc(NM[x.oleh]):''):'Belum dipakai'}</small></span><span><button data-c="${esc(d.id)}">Salin</button> <button data-x="${esc(d.id)}">Hapus</button></span></div>`}).join('')||'<p class="mut">Belum ada kode sekali pakai.</p>';
@@ -463,7 +480,7 @@ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.5,t+.08);g.g
 function sCry(){if(!on)return;try{const c=ac();[0,.5,1].forEach((d,i)=>{const t=c.currentTime+d,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain(),f=c.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(470-i*50,t);o.frequency.exponentialRampToValueAtTime(250-i*20,t+.42);l.frequency.value=9;lg.gain.value=14;l.connect(lg);lg.connect(o.frequency);f.type='lowpass';f.frequency.value=1500;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.06);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.connect(f);f.connect(g);g.connect(c.destination);o.start(t);l.start(t);o.stop(t+.5);l.stop(t+.5)})}catch(e){}}
 let curPose='halo',i1,i2,showAll=false;
 function mood(p){curPose=p;const e=$('#tbp');if(e)e.innerHTML=tambi(p)}
-function hint(){if(mode!='play'||lock)return;mood('hmm');if(Q.ty=='frame'){const n=cnt(),t=Q.target;$('#fb').textContent=n<t?`Hmm, apa ya? Tambah ${t-n} lagi.`:n>t?`Hmm, apa ya? Ambil ${n-t}.`:'Hmm, apa ya? Sudah pas! Tekan Cek.'}else{gopen=true;setGuide();$('#fb').textContent='Hmm, apa ya? Lihat panduan di atas ya.'}}
+function hint(){if(mode!='play'||lock)return;mood('hmm');if(Q.ty=='frame'){const n=cnt(),t=Q.target;$('#fb').textContent=n<t?`Hmm, apa ya? Tambah ${t-n} lagi.`:n>t?`Hmm, apa ya? Ambil ${n-t}.`:'Hmm, apa ya? Sudah pas! Tekan Cek.'}else{$('#fb').textContent=eco()?(gem>0?'Hmm, apa ya? Buka panduan di bawah dengan 1 \u{1F48E}.':'Hmm, apa ya? Kumpulkan 50 poin untuk 1 \u{1F48E} agar bisa membuka panduan.'):'Hmm, apa ya? Lihat panduan di bawah ya.'}}
 function kick(){clearTimeout(i1);clearTimeout(i2);if(mode!='play'||lock)return;if(['zzz','hmm','ups'].includes(curPose))mood('halo');
 i1=setTimeout(hint,14000);i2=setTimeout(()=>{if(mode=='play'&&!lock){mood('zzz');$('#fb').textContent='Zzz... Ketuk benda untuk membangunkan Tambi.'}},50000)}
 addEventListener('pointerdown',kick,true);addEventListener('keydown',kick,true);
@@ -572,99 +589,52 @@ for(let i=0;i<Q.F*10;i++){const f=Q.init[i],ad=up&&!f&&i<c0+d,cu=!up&&f&&i>=c0-d
 h+='</div>';return gd(up?[`Lihat isi frame: ada ${c0}.`,`Ambil ${d} benda dari keranjang.`,'Seret atau ketuk, taruh satu per satu ke kotak kosong.',`Tekan Cek. Jumlahnya jadi ${Q.target}.`]:[`Lihat isi frame: ada ${c0}.`,`Ambil keluar ${d} benda (ketuk atau seret keluar).`,'Hitung benda yang tersisa.',`Tekan Cek. Sisanya ${Q.target}.`],h)}
 
 /* ===== alur ronde ===== */
-let Qs=[],rd=1,passed=false,gopen=true;
+let Qs=[],rd=1,passed=false,gopen=true,pts=0,gem=0,streak=0,sd=null,svT;
+const eco=()=>!T&&!G&&!!P;
+const saveSoon=()=>{if(!eco())return;P.pt=pts;P.gm=gem;clearTimeout(svT);svT=setTimeout(save,2500)};
 const doneR=()=>P&&P.r?(P.r[lv]||0):0;
 const nextRound=()=>(T||G)?1:Math.min(10,doneR()+1);
-function setGuide(){$('#gbox').hidden=!gopen;$('#gtog').textContent=gopen?'\u{1F4A1} Panduan: tutup':'\u{1F4A1} Panduan: buka';$('#gtog').setAttribute('aria-expanded',gopen)}
-$('#gtog').onclick=()=>{sClick();gopen=!gopen;setGuide()};
+function setGuide(){const b=$('#gbox'),g=$('#gtog');if(!Q)return;g.classList.toggle('lk',!Q.gu);if(!Q.gu){b.hidden=true;g.textContent='\u{1F512} Panduan terkunci: pakai 1 \u{1F48E} untuk membuka';return}b.hidden=!gopen;g.textContent=gopen?'\u{1F4A1} Panduan: tutup':'\u{1F4A1} Panduan: buka';g.setAttribute('aria-expanded',gopen)}
+$('#gtog').onclick=()=>{if(!Q)return;if(!Q.gu){if(gem>0){gem--;Q.gu=true;gopen=true;sCheer();pop('-1 \u{1F48E}','m');renderStats();saveSoon();setGuide()}else{sOops();$('#fb').textContent='Permata belum ada. Kumpulkan 50 poin, lalu tukar jadi 1 \u{1F48E}.'}return}sClick();gopen=!gopen;setGuide()};
+function renderStats(){const h=eco()?`<div class="pts"><span class="pc">\u{1F525} Beruntun <b>${streak}</b></span><span class="pc">\u2B50 Poin <b>${pts}</b>/50</span><span class="pc">\u{1F48E} Permata <b>${gem}</b></span><div class="pbar"><div style="width:${Math.min(100,pts*2)}%"></div></div><button class="xchg${pts>=50?' rdy':''}"${pts>=50?'':' disabled'}>Tukar 50 poin jadi 1 \u{1F48E}</button></div>`:'';['#st1','#st2'].forEach(s=>{const e=$(s);if(e)e.innerHTML=h})}
+function pop(t,c){const e=document.createElement('div');e.className='ptpop '+c;e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),1200)}
+addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.xchg');if(!b||b.disabled||pts<50||!eco())return;pts-=50;gem++;sCheer();conf();pop('+1 \u{1F48E}','g');renderStats();saveSoon()});
 function rpick(){const done=doneR(),all=T||G;$('#rp').innerHTML=Array.from({length:10},(_,i)=>{const r=i+1,lk=!all&&r>done+1,dn=!all&&r<=done;return`<button class="rb${lk?' lk':''}${dn?' dn':''}${!all&&r==done+1?' nx':''}" data-r="${r}">${lk?'\u{1F512}':dn?'\u2713':'\u25B6'}<b>${r}</b></button>`}).join('')}
 $('#rp').onclick=e=>{const b=e.target.closest('.rb');if(!b)return;if(b.classList.contains('lk')){sOops();return}sClick();startRound(+b.dataset.r)};
 function ui(){const p=mode=='play',d=mode=='demo',e=mode=='end',ok=e&&(passed||T||G);
 $('#rep').hidden=!d;$('#start').hidden=!(d||e);$('#rpw').hidden=!d;
-$('#chk').hidden=!(p&&!lock&&Q&&(Q.ty=='frame'||Q.ty=='multi'));$('#nxt').hidden=!(p&&lock);
+$('#chk').hidden=!(p&&!lock&&Q&&(Q.ty=='frame'||Q.ty=='multi'||(Q.ty=='ch'&&Q.sel>=0)));$('#nxt').hidden=!(p&&lock);
 $('#nr').hidden=!(ok&&rd<10);$('#nl').hidden=!(ok&&rd==10&&lv<ORD.length-1);
 $('#bar').hidden=!p;$('#rinfo').hidden=!p;$('#gwrap').hidden=!p;$('#qa').hidden=!(p&&Q&&Q.ty!='frame');
 if(d){$('#fr').hidden=false;$('#cnt').hidden=false;$('#tray').hidden=false}
 if(e){$('#fr').hidden=true;$('#cnt').hidden=true;$('#tray').hidden=true}
 $('#start').textContent=e?'Ulangi ronde (soal baru)':'Mulai Ronde '+nextRound();$('#nxt').textContent=qi>=9?'Lihat hasil':'Lanjut'}
 function startRound(r){tok++;rd=r;qi=0;sc=0;passed=false;Qs=plan(lv,r);nextQ()}
-function nextQ(){mode='play';lock=false;mood('halo');Q=Qs[qi];tries=0;last=-1;$('#rinfo').textContent=`Ronde ${rd} dari 10, soal ${qi+1} dari 10`;$('#fb').textContent='';$('#bar div').style.width=qi/10*100+'%';kick();renderQ();ui();scrollTo(0,0)}
+function nextQ(){mode='play';lock=false;mood('halo');Q=Qs[qi];Q.gu=!eco();tries=0;last=-1;$('#rinfo').textContent=`Ronde ${rd} dari 10, soal ${qi+1} dari 10`;$('#fb').textContent='';$('#bar div').style.width=qi/10*100+'%';kick();renderQ();ui();scrollTo(0,0)}
 function renderQ(){const fr=Q.ty=='frame';$('#gbox').innerHTML=fr?fguide(Q):Q.g;setGuide();
 $('#fr').hidden=!fr;$('#cnt').hidden=!fr;$('#tray').hidden=!fr;$('#qa').hidden=fr;
 if(fr){cells=[...Q.init];$('#lx').textContent=Q.text;draw();return}
-$('#lx').innerHTML=Q.q;$('#qv').innerHTML=Q.v||'';Q.pos=0;
-$('#qc').innerHTML=(Q.ty=='ch'?Q.ch.map((c,i)=>`<button class="chb" data-i="${i}">${c.h}</button>`):Q.items.map((c,i)=>`<button class="chb tl" data-i="${i}">${Q.ty=='ord'?c:c.h}</button>`)).join('');
+$('#lx').innerHTML=Q.q;Q.pos=0;Q.sel=-1;let v=Q.v||'';
+if(Q.ty=='ch'){let ok=false;for(const[re,rp]of[[/<i class="mqb">\?<\/i>/,'<i class="mqb slot">?</i>'],[/<i>\?<\/i>/,'<i class="slot">?</i>'],[/<b class="mq">\?<\/b>/,'<b class="mq slot">?</b>']]){if(re.test(v)){v=v.replace(re,rp);ok=true;break}}if(!ok)v+='<div class="aslot slot">?</div>'}
+$('#qv').innerHTML=v;
+$('#qc').innerHTML=(Q.ty=='ch'?Q.ch.map((c,i)=>`<button class="chb dr" data-i="${i}">${c.h}</button>`):Q.items.map((c,i)=>`<button class="chb tl" data-i="${i}">${Q.ty=='ord'?c:c.h}</button>`)).join('');
 $('#qc').className='qc'+(Q.ty=='ch'&&Q.ch.length==3?' c3':'')}
-function good(b){if(tries==0)sc++;lock=true;sYeay();sClap();setTimeout(sCheer,500);conf();mood('hore');if(b)b.classList.add('good');$('#lx').innerHTML=Q.eq;$('#fb').textContent='Hebat sekali!';ui()}
-function bad(b,m){tries++;sCry();mood('ups');const el=Q.ty=='frame'?$('#fr'):$('#qa');el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500);if(b){b.classList.add('bad');b.disabled=true}$('#fb').textContent=m||'Belum tepat. Coba lagi!'}
+function good(b){if(tries==0){sc++;if(eco()){pts++;streak++;pop('+1 \u2B50','g')}}renderStats();saveSoon();lock=true;sYeay();sClap();setTimeout(sCheer,500);conf();mood('hore');if(b)b.classList.add('good');$('#lx').innerHTML=Q.eq;$('#fb').textContent='Hebat sekali!';ui()}
+function bad(b,m){tries++;if(tries==1&&eco()){streak=0;if(pts>0){pts--;pop('-1 \u2B50','m')}renderStats();saveSoon()}sCry();mood('ups');const el=Q.ty=='frame'?$('#fr'):$('#qa');el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500);if(b){b.classList.add('bad');b.disabled=true}$('#fb').textContent=m||'Belum tepat. Coba lagi!'}
 $('#qc').onclick=e=>{const b=e.target.closest('.chb');if(!b||lock||b.disabled||mode!='play')return;const i=+b.dataset.i;
-if(Q.ty=='ch'){if(Q.ch[i].ok)good(b);else bad(b)}
+if(Q.ty=='ch'){if(e.detail===0)fillSlot(i)}
 else if(Q.ty=='ord'){if(b.classList.contains('on'))return;if(Q.items[i]==Q.exp[Q.pos]){Q.pos++;b.classList.add('on');b.dataset.n=Q.pos;sPop(Q.pos);if(Q.pos==Q.exp.length)good()}else{bad();Q.pos=0;[...$('#qc').children].forEach(x=>{x.classList.remove('on');delete x.dataset.n})}}
 else if(Q.ty=='multi'){sClick();b.classList.toggle('on')}};
 $('#qv').onclick=e=>{const x=e.target.closest('.xo');if(x&&mode=='play'&&!lock){sClick();x.classList.toggle('xd')}};
 function conf(){for(let i=0;i<20;i++){const s=document.createElement('span');s.className='cf';s.textContent=['\u{1F389}','\u2B50','\u{1F388}','\u2728'][i%4];s.style.left=R(2,94)+'%';s.style.animationDelay=Math.random()*.5+'s';document.body.append(s);setTimeout(()=>s.remove(),2600)}}
-$('#chk').onclick=()=>{sClick();if(Q.ty=='multi'){const kids=[...$('#qc').children],on=kids.map(x=>x.classList.contains('on'));if(Q.items.every((it,i)=>it.ok===on[i])){kids.forEach(x=>{if(x.classList.contains('on'))x.classList.add('good')});good()}else bad()}
+$('#chk').onclick=()=>{sClick();if(Q.ty=='ch'){if(Q.sel<0)return;const b=$('#qc').children[Q.sel];if(Q.ch[Q.sel].ok)good(b);else{bad(b);clearSlot()}}else if(Q.ty=='multi'){const kids=[...$('#qc').children],on=kids.map(x=>x.classList.contains('on'));if(Q.items.every((it,i)=>it.ok===on[i])){kids.forEach(x=>{if(x.classList.contains('on'))x.classList.add('good')});good()}else bad()}
 else{const n=cnt(),t=Q.target;if(n==t)good();else bad(null,n<t?`Masih kurang ${t-n}. Coba lagi!`:`Kelebihan ${n-t}. Coba lagi!`)}};
 $('#nxt').onclick=()=>{sClick();qi++;if(qi<10)nextQ();else endRound()};
-function endRound(){mode='end';passed=sc>=LULUS_RONDE;$('#bar div').style.width='100%';$('#fr').innerHTML='';$('#cnt').textContent='';$('#tray').innerHTML='';
+function endRound(){mode='end';if(eco()){P.pt=pts;P.gm=gem}passed=sc>=LULUS_RONDE;$('#bar div').style.width='100%';$('#fr').innerHTML='';$('#cnt').textContent='';$('#tray').innerHTML='';
 $('#lx').textContent=`Ronde ${rd}: benar ${sc} dari 10 ${sc==10?'\u2B50\u2B50\u2B50':sc>=8?'\u2B50\u2B50':sc>=5?'\u2B50':''}`;
 let m=passed?`Hebat! Ronde ${rd} lolos.`:'Belum lolos. Semua soal harus benar pada percobaan pertama. Ayo ulangi, soalnya baru!';
 if(P&&!T&&!G&&passed){if(rd>(P.r[lv]||0))P.r[lv]=rd;if(rd==10&&lv==P.max&&lv<ORD.length-1){P.max=lv+1;m+=' Level baru terbuka! \u{1F513}'}else if(rd<10)m+=' Ronde berikutnya terbuka.';save()}
 if(T||G)m=passed?'Lolos!':'Mode guru: semua ronde dan level tetap terbuka.';
-$('#fb').textContent=m;sClap();mood(passed?'hore':'halo');ui()}
+$('#fb').textContent=m;sClap();mood(passed?'hore':'halo');ui();saveSoon()}
 $('#start').onclick=()=>{sClick();startRound(mode=='end'?rd:nextRound())};
-$('#nr').onclick=()=>{sClick();startRound(rd+1)};
-
-/* soal */
-const arr=(F,n,em)=>Array.from({length:F*10},(_,i)=>i<n?em:'');
-function mk(l,i){let e=E[R(0,7)],e2=E[R(0,7)],a,b,t,n,q;while(e2==e)e2=E[R(0,7)];
-const add=()=>{a=R(1,5);b=R(1,10-a);return{F:1,init:arr(1,a,e),e,tr:e2,target:a+b,text:`${a} ${e} ditambah ${b} ${e2}. Pindahkan ${b} ${e2} ke frame!`,eq:`${a} + ${b} = ${a+b} 🎉`}};
-const sub=()=>{a=R(3,10);b=R(1,a-1);return{F:1,init:arr(1,a,e),e,tr:null,target:a-b,text:`Ada ${a} ${e}. Ambil keluar ${b} ${e}!`,eq:`${a} − ${b} = ${a-b} 🎉`}};
-if(typeof l=='string'){const N=+l.slice(1),F=Math.ceil(N/10);b=R(1,Math.min(9,N-1));a=N-b;return{F,init:arr(F,a,e),e,tr:e2,target:N,text:`${a} + ? = ${N}. Isi sampai jadi ${N}!`,eq:`${a} + ${b} = ${N} 🎉`}}
-if(l==0){n=R(1,i<3?5:10);return{F:1,init:arr(1,0,e),e,tr:e,target:n,text:`Taruh ${n} ${e} di dalam frame.`,eq:`${n} ${e} 🎉`}}
-if(l==1)return add();if(l==2)return sub();if(l==3)return R(0,1)?add():sub();
-if(l==4){a=R(1,9);return{F:1,init:arr(1,a,e),e,tr:e2,target:10,text:`${a} + ? = 10. Isi sampai frame penuh!`,eq:`${a} + ${10-a} = 10 🎉`}}
-if(l==5){b=R(1,9);return{F:1,init:arr(1,10,e),e,tr:null,target:10-b,text:`10 − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`10 − ${b} = ${10-b} 🎉`}}
-if(l==6){if(R(0,1)){n=R(1,9);return{F:2,init:arr(2,10,e),e,tr:e2,target:10+n,text:`10 + ${n} = ? Taruh ${n} ${e2} di frame kedua.`,eq:`10 + ${n} = ${10+n} 🎉`}}
-a=R(6,9);b=R(11-a,9);return{F:2,init:arr(2,a,e),e,tr:e2,target:a+b,text:`${a} + ${b} = ? Isi frame pertama sampai penuh dulu.`,eq:`${a} + ${b} = ${a+b} 🎉`}}
-let r,k;if(l==22){r=R(1,4);const lo=r*10,hi=lo+10;a=R(lo,hi-1);b=R(1,Math.min(9,hi-a));const c=R(1,Math.min(9,a+b-1));return{F:hi/10,init:arr(hi/10,a,e),e,tr:e2,target:a+b-c,text:`${a} + ${b} − ${c} = ? Tambah ${b} ${e2}, lalu ambil ${c}.`,eq:`${a} + ${b} − ${c} = ${a+b-c} 🎉`}}
-if(l<10){r=1;k=['sub','below','mix'][l-7]}else{r=2+Math.floor((l-10)/4);k=['add','sub','below','mix'][(l-10)%4]}
-if(k=='mix')k=R(0,1)?'add':'sub';
-const lo=r*10,hi=lo+10,F=hi/10;
-if(k=='add'){a=R(lo,hi-1);b=R(1,Math.min(9,hi-a));return{F,init:arr(F,a,e),e,tr:e2,target:a+b,text:`${a} + ${b} = ? Tambahkan ${b} ${e2}.`,eq:`${a} + ${b} = ${a+b} 🎉`}}
-if(k=='sub'){a=R(lo+1,hi);b=R(1,9);return{F,init:arr(F,a,e),e,tr:null,target:a-b,text:`${a} − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`${a} − ${b} = ${a-b} 🎉`}}
-b=R(1,9);return{F,init:arr(F,hi,e),e,tr:null,target:hi-b,text:`${hi} − ${b} = ? Ambil keluar ${b} ${e}.`,eq:`${hi} − ${b} = ${hi-b} 🎉`}}
-const cnt=()=>cells.filter(Boolean).length;
-function draw(){let h='';for(let f=0;f<Q.F;f++){h+=`<div class="frame${Q.F>2?' sm':''}">`;for(let k=0;k<10;k++){const i=f*10+k,c=cells[i];h+=`<div class="cell" data-i="${i}">${c?`<span class="ct${i==last?' pop':''}" data-i="${i}" tabindex="0">${c}</span>`:''}</div>`}h+='</div>'}
-$('#fr').innerHTML=h;$('#cnt').textContent='Ada: '+cnt();
-$('#tray').innerHTML=mode=='play'?`<div class="src" tabindex="0" role="button" aria-label="Tambah benda ke frame">${Q.tr||Q.e}</div><span class="mut">${Q.tr?'Seret ke frame atau ketuk':'Terambil terlalu banyak? Seret ke frame untuk menambah lagi'}</span>`:''}
-/* contoh bergerak */
-async function demo(){const my=++tok;mode='demo';lock=false;mood('halo');Q=mk(ORD[lv],0);cells=[...Q.init];last=-1;ui();$('#fb').textContent='';$('#lx').textContent='Contoh: '+Q.text;draw();await sl(1100);
-const c0=cnt(),up=Q.target>c0,idx=[];
-if(up){for(let i=0;i<cells.length&&idx.length<Q.target-c0;i++)if(!cells[i])idx.push(i)}else{for(let i=cells.length-1;i>=0&&idx.length<c0-Q.target;i--)if(cells[i])idx.push(i)}
-for(const i of idx){if(my!=tok)return;cells[i]=up?(Q.tr||Q.e):'';last=i;sPop(cnt());draw();say(cnt());await sl(900)}
-if(my!=tok)return;$('#lx').textContent=Q.eq;sCheer();mood('hore');$('#fb').textContent='Sekarang giliranmu! Pilih ronde di bawah, atau tekan Mulai.'}
-function openLv(i){if(!open_(i))return;lv=i;$('#home').hidden=true;$('#lvl').hidden=false;const l=info(i);$('#lp1').textContent='Level '+LB[i];$('#lp2').textContent=l[0];$('#lt').textContent=`Level ${LB[i]}: ${l[0]}`;$('#ld').textContent=`${l[1]}. ${l[2]}`;$('#tip').textContent=l[3];scrollTo(0,0);rpick();demo()}
-$('#rep').onclick=()=>{sClick();demo()};
-$('#nl').onclick=()=>{sClick();openLv(lv+1)};
-$('#back').onclick=()=>{sClick();tok++;$('#lvl').hidden=true;$('#home').hidden=false;renderGrid()};
-/* geser dan ketuk */
-function empty(f){const lo=f>=0?f*10:0,hi=f>=0?lo+10:cells.length;for(let i=lo;i<hi;i++)if(!cells[i])return i;for(let i=0;i<cells.length;i++)if(!cells[i])return i;return -1}
-function put(i,em){cells[i]=em;last=i;sPop(cnt());say(cnt())}
-function del(i){cells[i]='';last=-1;tone(260,.12,'sine',.18,0,160);say(cnt())}
-addEventListener('pointerdown',e=>{const t=e.target.closest('.ct,.src');if(!t||mode!='play'||lock)return;e.preventDefault();drag={from:t.classList.contains('src')?-1:+t.dataset.i,x:e.clientX,y:e.clientY,em:t.textContent,g:null}});
-addEventListener('pointermove',e=>{if(!drag)return;if(!drag.g&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){const g=document.createElement('div');g.className='ghost';g.textContent=drag.em;document.body.append(g);drag.g=g;if(drag.from>=0){cells[drag.from]='';last=-1;draw()}}
-if(drag&&drag.g){drag.g.style.left=e.clientX+'px';drag.g.style.top=e.clientY+'px'}});
-addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;
-if(!d.g){if(d.from<0){const i=empty(-1);if(i>=0)put(i,d.em)}else del(d.from)}
-else{const el=document.elementFromPoint(e.clientX,e.clientY),c=el&&el.closest('.cell');d.g.remove();
-if(c){let i=+c.dataset.i;if(cells[i])i=empty(Math.floor(i/10));if(i>=0)put(i,d.em);else if(d.from>=0)cells[d.from]=d.em}
-else if(d.from>=0)del(d.from)}
-draw()});
-addEventListener('pointercancel',()=>{if(drag){if(drag.g)drag.g.remove();drag=null;if(mode=='play')draw()}});
-addEventListener('keydown',e=>{if(e.key!='Enter'&&e.key!=' ')return;const t=e.target;if(mode!='play'||lock)return;
-if(t.classList&&t.classList.contains('src')){e.preventDefault();const i=empty(-1);if(i>=0){put(i,Q.tr||Q.e);draw()}}
-else if(t.classList&&t.classList.contains('ct')){e.preventDefault();del(+t.dataset.i);draw()}});
-</script>
-</body>
-</html>
+$('#nr').onclick=()=>{sClick();st
