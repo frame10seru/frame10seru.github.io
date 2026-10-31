@@ -299,6 +299,18 @@ main:has(#lvl:not([hidden])) #snd{margin:0}
 .g2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}.g2 small{font-weight:800}
 .mf5{display:inline-grid;grid-template-columns:repeat(5,26px);gap:2px}
 .gv .gl{font:800 1.1rem "Baloo 2",sans-serif;opacity:0;animation:gt var(--c,6s) infinite var(--d,0s);margin:2px 0}
+/* ===== suara, frame interaktif, number bond ===== */
+.spk{flex:none;width:48px;height:48px;border-radius:50%;border:3px solid var(--ink);background:#fff;font-size:1.3rem;box-shadow:0 3px 0 var(--ink);padding:0;cursor:pointer}
+#lx{cursor:pointer}
+.pvw{margin:6px 0}.pvf{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pvfr{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:5px;background:#2C3A8F;border-radius:12px;width:min(46%,170px)}
+.pcell{aspect-ratio:1;background:#FBFDFF;border-radius:6px;display:grid;place-items:center;font-size:clamp(16px,5vw,26px);line-height:1}
+.pcell i{font-style:normal;display:block}.pa{cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 0 4px #5AA9FF)}
+.pvt{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px}
+.pvsrc{font-size:2rem;line-height:1;padding:4px 12px;border:3px dashed var(--ink);border-radius:16px;background:#fff;cursor:grab;touch-action:none;user-select:none}
+.pvt small{color:var(--mut);font-weight:700;max-width:210px;text-align:left}
+.cr{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0;flex-wrap:wrap}.cr b{font:800 .95rem "Baloo 2",sans-serif}
+#lvl.pm .pvfr{width:min(44%,150px)}
 </style>
 </head>
 <body>
@@ -393,7 +405,7 @@ main:has(#lvl:not([hidden])) #snd{margin:0}
 <div id="st2"></div>
 <p class="mut rinfo" id="rinfo" hidden></p>
 <div class="bar" id="bar" hidden><div></div></div>
-<div class="tbrow"><div class="tbp" id="tbp"></div><p class="say" id="lx" aria-live="polite"></p></div>
+<div class="tbrow"><div class="tbp" id="tbp"></div><p class="say" id="lx" aria-live="polite"></p><button class="spk" id="spk" aria-label="Dengarkan soal">🔊</button></div>
 <div class="qa" id="qa" hidden><div class="qv" id="qv"></div><div class="qc" id="qc"></div></div>
 <div class="frames" id="fr"></div>
 <p class="cnt" id="cnt"></p>
@@ -650,18 +662,25 @@ pola:(S,t)=>{const hi=Math.max(S.hi,10),lo=S.lo>=10?S.lo:0;let D=pk(t<.35?[1,2]:
 ban:(S,t)=>{const lo=Math.max(1,S.lo||1),a=R(lo,S.hi),b=R(0,4)?R(lo,S.hi):a,sg=a<b?'<':a>b?'>':'=';return CH({k:'ban',q:'Pilih tanda yang benar.',v:`<div class="cmp"><b>${a}</b><i>?</i><b>${b}</b></div>`,ch:['<','>','='].map(x=>({h:x,ok:x==sg})),g:gd(['Bandingkan kedua bilangan.','Tanda &lt; dan &gt; membuka ke bilangan yang lebih besar.','Kalau sama banyak, pakai tanda =.'],`<div class="cmp"><b>${a}</b><i class="gi" style="--c:3s">${sg}</i><b>${b}</b></div>`),eq:`${a} ${sg} ${b}. 🎉`})},
 antara:(S,t)=>{const lo=Math.max(1,S.lo||1),hi=S.hi,X=R(lo,Math.max(lo,hi-3)),Y=Math.min(hi,X+R(2,5)),tg=[];for(let v=X+1;v<Y;v++)tg.push(v);const set=new Set(tg);let g=0;while(set.size<8&&g++<80){const v=R(Math.max(1,lo-2),hi+2);if(v<=X||v>=Y)set.add(v)}return{ty:'multi',k:'antara',q:`Ketuk semua bilangan yang <b>lebih dari ${X}</b> tetapi <b>kurang dari ${Y}</b>, lalu tekan Cek.`,items:sh([...set]).map(v=>({h:String(v),ok:v>X&&v<Y})),g:gd([`Bilangan harus lebih besar dari ${X}.`,`Dan lebih kecil dari ${Y}.`,`${X} dan ${Y} sendiri tidak ikut.`],`<div class="sqr"><b>${X}</b>${tg.map(v=>`<b class="hl">${v}</b>`).join('')}<b>${Y}</b></div>`),eq:`Jawabannya: ${tg.join(', ')}. 🎉`}},
 bs:(S,t)=>{const lo=Math.max(2,(S.lo||1)+1),n=R(lo,Math.max(lo,S.hi-1)),af=R(0,1),ans=af?n+1:n-1;return CH({k:'bs',q:`Bilangan <b>${af?'sesudah':'sebelum'}</b> ${n} adalah ...`,v:`<div class="sqr">${af?`<b>${n}</b><b class="mq">?</b>`:`<b class="mq">?</b><b>${n}</b>`}</div>`,ch:nopts(ans,Math.max(0,n-3),n+3),g:gd([af?`Hitung maju satu dari ${n}.`:`Hitung mundur satu dari ${n}.`],`<div class="sqr"><b>${n-1}</b><b class="hl">${n}</b><b>${n+1}</b></div>`),eq:`${af?'Sesudah':'Sebelum'} ${n} adalah ${ans}. 🎉`})},
-tree:(S,t)=>{const T=S.k=='pair'?S.N:R(Math.max(3,S.lo?S.lo+2:3),Math.max(4,lerp(Math.min(S.hi,6),S.hi,t))),a=R(1,T-1),b=T-a,hid=pk(['l','r','t']),ans=hid=='t'?T:hid=='l'?a:b;return CH({k:'tree',q:'Lengkapi pohon bilangan. Berapa bilangan yang hilang?',v:tree(T,a,b,hid),ch:nopts(ans,1,Math.max(T,ans+4)),g:gd(['Bilangan di atas adalah gabungan dua bilangan di bawah.',`${a} dan ${b} membuat ${T}.`],tree(T,a,b,'',1)),eq:`${a} dan ${b} membuat ${T}. 🎉`})},
+tree:(S,t)=>{const T=S.k=='pair'?S.N:R(Math.max(3,S.lo?S.lo+2:3),Math.max(4,lerp(Math.min(S.hi,6),S.hi,t))),a=R(1,T-1),b=T-a,hid=pk(['l','r','l','r','t']),e1=pk(EM),e2=pk(EM.filter(x=>x!=e1)),known=hid=='l'?b:a,ans=hid=='t'?T:T-known,c=((T-known)*.6+4).toFixed(1),d=((T-known)*.6+1).toFixed(1);
+const vpre=hid=='t'?`${tree(T,a,b,'t')}<div class="cr"><span class="eqq">${a} + ${b} = <i class="mqb slot">?</i></span></div>`:`${tree(T,a,b,hid)}<div class="cr"><b>Cara 1:</b><span class="eqq">${T} \u2212 ${known} = <i class="mqb slot">?</i></span></div><div class="cr"><b>Cara 2:</b><span class="eqq">${known} + <i class="mqb slot">?</i> = ${T}</span></div><p class="mut" style="margin:2px">Frame untuk cara 2: ${known} ditambah berapa jadi ${T}?</p>`;
+const steps=hid=='t'?[`${a} dan ${b} digabung membuat bilangan di atas.`,`Mulai dari ${a} gambar, tambahkan ${b} gambar.`,`Hitung semuanya: ${a} + ${b} = ${T}.`]:[`Bilangan di atas adalah ${T}, bagian yang kita tahu adalah ${known}.`,`Cara 1: ${T} dikurangi ${known}. Ambil ${known} dari ${T}, sisanya yang dicari.`,`Cara 2: ${known} ditambah berapa jadi ${T}? Lihat frame, hitung kotak yang kosong.`,`Ada ${T-known} kotak kosong. Jadi jawabannya ${T-known}.`];
+return{ty:'ch',k:'tree',pv:1,e1,e2,pF:Math.ceil(T/10),pc0:Array.from({length:T},(_,i)=>i<known?1:0),q:'Lengkapi pohon bilangan. Berapa bilangan yang hilang?',vpre,vpost:'',
+say:hid=='t'?`Pohon bilangan. ${a} dan ${b} membuat berapa? ${a} ditambah ${b} sama dengan berapa. Seret jawaban ke kotak kosong.`:`Pohon bilangan. Bilangan atas ${T}. Satu bilangan bawah ${known}. Berapa bilangan yang hilang? Cara satu: ${T} dikurangi ${known} sama dengan berapa. Cara dua: ${known} ditambah berapa sama dengan ${T}. Seret jawaban ke kotak kosong.`,
+ch:nopts(ans,1,Math.max(T,ans+4)),g:gd(steps,pvMini(T,known,e1,e2,c)+tree(T,a,b,'',1)+(hid=='t'?'':`<div class="gl" style="--d:${d}s;--c:${c}s">${T} \u2212 ${known} = ${ans}</div><div class="gl" style="--d:${(+d+1).toFixed(1)}s;--c:${c}s">${known} + ${ans} = ${T}</div>`)),eq:`${a} dan ${b} membuat ${T}. \u{1F389}`}},
 pair2g:(S,t)=>{const hi=Math.min(S.hi,20),lo=S.lo?S.lo+1:2,T=R(lo,Math.max(lo,lerp(Math.min(hi,lo+3),hi,t))),a=R(Math.max(1,T-10),Math.min(10,T-1)),b=T-a,[e1,e2]=pk([['🍎','🍏'],['🐥','🐟'],['🌸','⭐'],['🍪','🍓'],['🦋','🐞']]);return CH({k:'pair2g',q:`Hitung kedua kelompok. <b>${a}</b> dan <b>${b}</b> membuat ...`,v:`<span class="grp">${objs(a,e1)}</span> <span class="grp">${objs(b,e2)}</span>`,ch:nopts(T,1,T+5),g:gd([`Hitung kelompok pertama: ${a}.`,`Hitung kelompok kedua: ${b}.`,'Gabungkan lalu hitung semuanya.'],`<span class="grp">${objs(a,e1,{c:1})}</span> <span class="grp">${objs(b,e2,{c:1,off:a})}</span>`),eq:`${a} dan ${b} membuat ${T}. 🎉`})},
-pairN:(S,t)=>{const N=S.N||10,b=R(1,Math.max(1,Math.min(N-1,lerp(3,9,t)))),a=N-b;return CH({k:'pairN',q:`Pasangan ${N}. Isi yang hilang agar jumlahnya ${N}.`,v:`<div class="eqq">${a} + <i class="mqb">?</i> = ${N}</div>`,ch:nopts(b,1,Math.min(N-1,Math.max(b+5,9))),g:gd([`Mulai dari ${a}.`,`Hitung maju sampai ${N}: berapa lompatan?`,`${b} lompatan, jadi ${a} + ${b} = ${N}.`],nl(a,b,1,1)),eq:`${a} + ${b} = ${N}. 🎉`})},
+pairN:(S,t)=>{const N=S.N||10,b=R(1,Math.max(1,Math.min(N-1,lerp(3,9,t)))),a=N-b,e1=pk(EM),e2=pk(EM.filter(x=>x!=e1)),f=R(0,2),sl='<i class="mqb slot">?</i>',c=(b*.6+4).toFixed(1);
+const eq=f==0?`${sl} + ${a} = ${N}`:f==1?`${a} + ${sl} = ${N}`:`${N} = ${a} + ${sl}`,sy=f==0?`berapa ditambah ${a} sama dengan ${N}`:f==1?`${a} ditambah berapa sama dengan ${N}`:`${N} sama dengan ${a} ditambah berapa`;
+return{ty:'ch',k:'pairN',pv:1,e1,e2,pF:Math.ceil(N/10),pc0:Array.from({length:N},(_,i)=>i<a?1:0),q:`Membuat ${N}. Isi kotak yang hilang.`,vpre:`<div class="eqq">${eq}</div>`,vpost:'',say:`Membuat ${N}. ${sy}? Hitung kotak kosong di frame. Seret jawaban ke kotak kosong.`,
+ch:nopts(b,1,Math.min(N-1,Math.max(b+5,9))),g:gd([`Frame ini punya ${N} kotak. Sudah ada ${a} gambar.`,'Hitung kotak yang masih kosong.',`Isi kotak kosong satu per satu sampai penuh: 1, 2, ... ${b}.`,`Ada ${b} kotak kosong. Jadi ${a} + ${b} = ${N}.`],pvMini(N,a,e1,e2,c)+`<div class="gl" style="--d:${(b*.6+1).toFixed(1)}s;--c:${c}s">${a} + ${b} = ${N}</div>`),eq:`${a} + ${b} = ${N}. \u{1F389}`}},
 addG:(S,t)=>{const hi=Math.min(S.hi,20),lo=S.lo?S.lo+1:2,T=R(lo,Math.max(lo,lerp(Math.min(hi,lo+3),hi,t))),a=R(Math.max(1,T-10),Math.min(10,T-1)),b=T-a,[e1,e2]=pk([['🍎','🍏'],['🐥','🐟'],['🌸','⭐'],['🍪','🍓'],['🦋','🐞']]);return CH({k:'addG',q:`${a} + ${b} = ? Hitung semua gambar.`,v:`<span class="grp">${objs(a,e1)}</span><span class="pl">+</span><span class="grp">${objs(b,e2)}</span>`,ch:nopts(T,1,T+5),g:gd([`Hitung kelompok kiri: ada ${a}.`,`Hitung kelompok kanan: ada ${b}.`,`Gabungkan lalu hitung semuanya: 1, 2, ... ${T}.`],`<span class="grp">${objs(a,e1,{c:1})}</span><span class="pl">+</span><span class="grp">${objs(b,e2,{c:1,off:a})}</span>`),eq:`${a} + ${b} = ${T}. 🎉`})},
 nline:(S,t)=>{const lo=Math.max(1,S.lo||1),a=R(lo,Math.max(lo,S.hi-1)),b=R(1,Math.max(1,Math.min(lerp(3,9,t),S.hi-a))),T=a+b;return CH({k:'nline',q:`Mulai dari ${a}, hitung maju ${b}. ${a} + ${b} = ?`,v:nl(a,b,1,0),ch:nopts(T,Math.max(0,T-5),T+5),g:gd([`Mulai dari ${a} pada garis bilangan.`,`Lompat maju ${b} kali, satu angka tiap lompatan.`,`Berhenti di ${T}.`],nl(a,b,1,1)),eq:`${a} + ${b} = ${T}. 🎉`})},
 vert:(S,t)=>{const lo=Math.max(1,S.lo||1),a=R(lo,Math.max(lo,S.hi-1)),b=R(1,Math.max(1,Math.min(S.hi>20?lerp(4,20,t):lerp(3,9,t),S.hi-a))),T=a+b;return CH({k:'vert',q:'Jumlahkan susun ke bawah.',v:`<div class="vt"><span>${a}</span><br><span>+ ${b}</span><hr><span>?</span></div>`,ch:nopts(T,Math.max(0,T-5),T+5),g:gd(['Tulis bilangan yang satu di bawah yang lain.','Jumlahkan satuan dulu, lalu puluhan.',`Hitung maju dari ${a} sebanyak ${b}.`],b<=9?nl(a,b,1,1):''),eq:`${a} + ${b} = ${T}. 🎉`})},
-mk10:(S,t)=>{const base=S.k=='mix2'?pk([0,10,20,30]):S.lo-10,e1=pk(EM),e2=pk(EM.filter(x=>x!=e1)),need=R(1,4),a1=10-need,rest=R(1,Math.max(1,Math.min(lerp(2,5,t),9-need))),b=need+rest,a=base+a1,fin=base+10,total=a+b,vn=R(0,1)||t<.4;
+mk10:(S,t)=>{const base=S.k=='mix2'?pk([0,10,20,30]):S.lo-10,e1=pk(EM),e2=pk(EM.filter(x=>x!=e1)),need=R(1,5),a1=10-need,rest=R(1,Math.max(1,Math.min(lerp(2,5,t),9-need))),b=need+rest,a=base+a1,fin=base+10,total=a+b,vn=R(0,1)||t<.4;
 return{ty:'ch',k:'mk10',bor:1,vn,e1,e2,a1,b,need,rest,base,a,fin,total,A0:Array.from({length:10},(_,i)=>i<a1?1:0),B0:Array.from({length:10},(_,i)=>i<b?1:0),
 q:vn?`${a} + ${b}. Pinjam dari kotak 2 supaya kotak 1 jadi 10. Berapa gambar yang dipinjam?`:`${a} + ${b} = ? Buat kotak 1 jadi 10 dulu.`,
-hintTxt:`Pindahkan ${need} gambar dari kotak 2 ke kotak 1 sampai kotak 1 penuh.`,ch:vn?nopts(need,1,9):nopts(total,Math.max(0,total-5),total+5),g:borGuide({a1,b,need,rest,base,a,fin,total,e1,e2}),
+hintTxt:`Pindahkan ${need} gambar dari kotak 2 ke kotak 1 sampai kotak 1 penuh.`,say:(vn?`${a} ditambah ${b}. Pinjam dari kotak 2 supaya kotak 1 jadi 10. Berapa gambar yang dipinjam?`:`${a} ditambah ${b} sama dengan berapa. Buat kotak 1 jadi 10 dulu.`)+` Pindahkan ${need} gambar dari kotak 2 ke kotak 1 sampai kotak 1 penuh.`,ch:vn?nopts(need,1,9):nopts(total,Math.max(0,total-5),total+5),g:borGuide({a1,b,need,rest,base,a,fin,total,e1,e2}),
 eq:vn?`${a} + ${need} = ${fin}. Dipinjam ${need}. \u{1F389}`:`${fin} + ${rest} = ${total}. Jadi ${a} + ${b} = ${total}. \u{1F389}`}},
-
 teen:(S,t)=>{const lo=S.k=='mix2'?10:S.lo,n=R(lo+1,Math.max(lo+1,lerp(lo+3,S.hi,t))),base=Math.floor((n-1)/10)*10,rest=n-base,e=pk(EM);return CH({k:'teen',q:`Ada <b>${n}</b> benda. Lingkaran berisi ${base}. Berapa sisanya? ${base} + ? = ${n}`,v:ten(n,e,base,0).replace(/<span class="ring">/g,'<span class="ring">'),ch:nopts(rest,1,Math.max(10,rest+3)),g:gd([`Lingkari ${base} benda sebagai satu kelompok puluhan.`,'Hitung sisanya satu per satu.',`${base} + ${rest} = ${n}. Katanya: ${kata(n)}.`],ten(n,e,base,1)),eq:`${base} + ${rest} = ${n}. Katanya: ${kata(n)}. 🎉`})},
 subX:(S,t)=>{let a,b;if(S.k=='below'){a=S.top;b=R(1,lerp(3,9,t))}else{const lo=(S.lo||0)+1,hi=Math.max(lo+1,lerp(Math.min(S.hi,lo+3),S.hi,t));a=R(Math.max(lo,2),Math.max(2,hi));b=R(1,Math.max(1,Math.min(a-1,lerp(2,9,t))))}
 const e=pk(EM),T=a-b,sw=a<=20;return CH({k:'subX',q:sw?`${a} − ${b} = ? Ketuk gambar untuk mencoret ${b}, lalu pilih jawabannya.`:`${a} − ${b} = ?`,v:`<div class="eqq">${a} − ${b} = ?</div>`+(sw?objs(a,e,{tap:1}):''),ch:nopts(T,Math.max(0,T-5),Math.min(S.hi,a)+2),g:gd([`Ada ${a}. Tulis ${a} di awal.`,`Diambil ${b} → coret ${b} gambar (✕).`,'Hitung yang tidak dicoret.'],sw?objs(a,e,{c:0,x:b}):nl(a,b,-1,1)),eq:`${a} − ${b} = ${T}. 🎉`})},
@@ -720,21 +739,21 @@ if(d){$('#fr').hidden=false;$('#cnt').hidden=false;$('#tray').hidden=false}
 if(e){$('#fr').hidden=true;$('#cnt').hidden=true;$('#tray').hidden=true}
 $('#start').textContent=e?'Ulangi ronde (soal baru)':'Mulai Ronde '+nextRound();$('#nxt').textContent=qi>=9?'Lihat hasil':'Lanjut'}
 function startRound(r){tok++;rd=r;qi=0;sc=0;passed=false;Qs=plan(lv,r);nextQ()}
-function nextQ(){mode='play';lock=false;mood('halo');Q=Qs[qi];Q.gu=!eco();tries=0;last=-1;$('#rinfo').textContent=`Ronde ${rd} dari 10, soal ${qi+1} dari 10`;$('#fb').textContent='';$('#bar div').style.width=qi/10*100+'%';kick();renderQ();ui();scrollTo(0,0)}
+function nextQ(){mode='play';lock=false;mood('halo');Q=Qs[qi];Q.gu=!eco();tries=0;last=-1;$('#rinfo').textContent=`Ronde ${rd} dari 10, soal ${qi+1} dari 10`;$('#fb').textContent='';$('#bar div').style.width=qi/10*100+'%';kick();renderQ();ui();scrollTo(0,0);clearTimeout(fbT);setTimeout(speakQ,350)}
 function renderQ(){const fr=Q.ty=='frame';$('#gbox').innerHTML=fr?fguide(Q):Q.g;setGuide();
 $('#fr').hidden=!fr;$('#cnt').hidden=!fr;$('#tray').hidden=!fr;$('#qa').hidden=fr;
 if(fr){cells=[...Q.init];$('#lx').textContent=Q.text;draw();return}
 $('#lx').innerHTML=Q.q;Q.pos=0;Q.sel=-1;let v=Q.v||'';
-if(Q.bor){Q.A=Q.A0.slice();Q.B=Q.B0.slice();Q.moved=false;v=borHtml(Q)}else if(Q.ty=='ch'){let ok=false;for(const[re,rp]of[[/<i class="mqb">\?<\/i>/,'<i class="mqb slot">?</i>'],[/<i>\?<\/i>/,'<i class="slot">?</i>'],[/<b class="mq">\?<\/b>/,'<b class="mq slot">?</b>']]){if(re.test(v)){v=v.replace(re,rp);ok=true;break}}if(!ok)v+='<div class="aslot slot">?</div>'}
+if(Q.pv){Q.pc=Q.pc0.slice();v=Q.vpre+'<div id="pvbox">'+pvHtml(Q)+'</div>'+(Q.vpost||'')}else if(Q.bor){Q.A=Q.A0.slice();Q.B=Q.B0.slice();Q.moved=false;v=borHtml(Q)}else if(Q.ty=='ch'){let ok=false;for(const[re,rp]of[[/<i class="mqb">\?<\/i>/,'<i class="mqb slot">?</i>'],[/<i>\?<\/i>/,'<i class="slot">?</i>'],[/<b class="mq">\?<\/b>/,'<b class="mq slot">?</b>']]){if(re.test(v)){v=v.replace(re,rp);ok=true;break}}if(!ok)v+='<div class="aslot slot">?</div>'}
 $('#qv').innerHTML=v;
 $('#qc').innerHTML=(Q.ty=='ch'?Q.ch.map((c,i)=>`<button class="chb dr" data-i="${i}">${c.h}</button>`):Q.items.map((c,i)=>`<button class="chb tl" data-i="${i}">${Q.ty=='ord'?c:c.h}</button>`)).join('');
 $('#qc').className='qc'+(Q.ty=='ch'&&Q.ch.length==3?' c3':'')}
-function good(b){if(tries==0){sc++;if(eco()){pts++;streak++;pop('+1 \u2B50','g')}}renderStats();saveSoon();lock=true;sYeay();sClap();setTimeout(sCheer,500);conf();mood('hore');if(b)b.classList.add('good');$('#lx').innerHTML=Q.eq;$('#fb').textContent='Hebat sekali!';ui()}
-function bad(b,m){tries++;if(tries==1&&eco()){streak=0;if(pts>0){pts--;pop('-1 \u2B50','m')}renderStats();saveSoon()}sCry();mood('ups');const el=Q.ty=='frame'?$('#fr'):$('#qa');el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500);if(b){b.classList.add('bad');b.disabled=true}$('#fb').textContent=m||'Belum tepat. Coba lagi!'}
+function good(b){if(tries==0){sc++;if(eco()){pts++;streak++;pop('+1 \u2B50','g')}}renderStats();saveSoon();lock=true;sYeay();sClap();setTimeout(sCheer,500);conf();mood('hore');if(b)b.classList.add('good');$('#lx').innerHTML=Q.eq;$('#fb').textContent='Hebat sekali!';fbk('Hebat sekali!',1300);ui()}
+function bad(b,m){tries++;if(tries==1&&eco()){streak=0;if(pts>0){pts--;pop('-1 \u2B50','m')}renderStats();saveSoon()}sCry();mood('ups');const el=Q.ty=='frame'?$('#fr'):$('#qa');el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500);if(b){b.classList.add('bad');b.disabled=true}$('#fb').textContent=m||'Belum tepat. Coba lagi!';fbk('Coba lagi ya',1600)}
 $('#qc').onclick=e=>{const b=e.target.closest('.chb');if(!b||lock||b.disabled||mode!='play')return;const i=+b.dataset.i;
 if(Q.ty=='ch'){if(e.detail===0)fillSlot(i)}
-else if(Q.ty=='ord'){if(b.classList.contains('on'))return;if(Q.items[i]==Q.exp[Q.pos]){Q.pos++;b.classList.add('on');b.dataset.n=Q.pos;sPop(Q.pos);if(Q.pos==Q.exp.length)good()}else{bad();Q.pos=0;[...$('#qc').children].forEach(x=>{x.classList.remove('on');delete x.dataset.n})}}
-else if(Q.ty=='multi'){sClick();b.classList.toggle('on')}};
+else if(Q.ty=='ord'){if(b.classList.contains('on'))return;if(Q.items[i]==Q.exp[Q.pos]){Q.pos++;b.classList.add('on');b.dataset.n=Q.pos;sPop(Q.pos);speak(String(Q.items[i]));if(Q.pos==Q.exp.length)good()}else{bad();Q.pos=0;[...$('#qc').children].forEach(x=>{x.classList.remove('on');delete x.dataset.n})}}
+else if(Q.ty=='multi'){sClick();b.classList.toggle('on');speak(Q.items[i].h)}};
 $('#qv').onclick=e=>{const x=e.target.closest('.xo');if(x&&mode=='play'&&!lock){sClick();x.classList.toggle('xd')}};
 function conf(){for(let i=0;i<20;i++){const s=document.createElement('span');s.className='cf';s.textContent=['\u{1F389}','\u2B50','\u{1F388}','\u2728'][i%4];s.style.left=R(2,94)+'%';s.style.animationDelay=Math.random()*.5+'s';document.body.append(s);setTimeout(()=>s.remove(),2600)}}
 $('#chk').onclick=()=>{sClick();if(Q.ty=='ch'){if(Q.sel<0)return;const b=$('#qc').children[Q.sel];if(Q.ch[Q.sel].ok)good(b);else{bad(b);clearSlot()}}else if(Q.ty=='multi'){const kids=[...$('#qc').children],on=kids.map(x=>x.classList.contains('on'));if(Q.items.every((it,i)=>it.ok===on[i])){kids.forEach(x=>{if(x.classList.contains('on'))x.classList.add('good')});good()}else bad()}
@@ -759,18 +778,57 @@ return gd([`Kotak 1 ada ${Q.a1} gambar. Kotak 2 ada ${Q.b} gambar.${Q.base?` (${
 function borDraw(){$('#bf2').innerHTML=bfHtml(Q);const full=Q.A.every(v=>v>0);if(full&&!Q.moved){Q.moved=true;sCheer();mood('hore')}else if(!full&&Q.moved){Q.moved=false;Q.sel=-1}
 $('#bfx').innerHTML=full?bfEq(Q):`<p class="bhint">${Q.hintTxt}</p>`;$('#qc').classList.toggle('lockq',!full);[...$('#qc').children].forEach(x=>x.classList.remove('used'));ui()}
 function borMove(f,i){if(!Q||!Q.bor||lock||mode!='play')return;
-if(f=='B'&&Q.B[i]==1){const j=Q.A.indexOf(0);if(j<0)return;Q.B[i]=0;Q.A[j]=2;sPop(Q.A.filter(v=>v>0).length)}
+if(f=='B'&&Q.B[i]==1){const j=Q.A.indexOf(0);if(j<0)return;Q.B[i]=0;Q.A[j]=2;{const n=Q.A.filter(v=>v>0).length;sPop(n);say(n)}}
 else if(f=='A'&&Q.A[i]==2){const j=Q.B.indexOf(0);if(j<0)return;Q.A[i]=0;Q.B[j]=1;tone(260,.1,'sine',.15,0,160)}else return;borDraw()}
 let bd=null;
 addEventListener('pointerdown',e=>{if(mode!='play'||lock||!Q||!Q.bor)return;const t=e.target.closest&&e.target.closest('.bi');if(!t)return;e.preventDefault();bd={f:t.dataset.f,i:+t.dataset.i,x:e.clientX,y:e.clientY,g:null,html:t.innerHTML}});
 addEventListener('pointermove',e=>{if(!bd)return;if(!bd.g&&Math.hypot(e.clientX-bd.x,e.clientY-bd.y)>8){const g=document.createElement('div');g.className='ghost';g.innerHTML=bd.html;document.body.append(g);bd.g=g}if(bd.g){bd.g.style.left=e.clientX+'px';bd.g.style.top=e.clientY+'px'}});
 addEventListener('pointerup',e=>{if(!bd)return;const d=bd;bd=null;if(!d.g){borMove(d.f,d.i)}else{const el=document.elementFromPoint(e.clientX,e.clientY);d.g.remove();if(d.f=='B'&&el&&el.closest&&el.closest('.bfa'))borMove('B',d.i);else if(d.f=='A'&&el&&el.closest&&el.closest('.bfb'))borMove('A',d.i)}});
 addEventListener('pointercancel',()=>{if(bd){if(bd.g)bd.g.remove();bd=null}});
-function fillSlot(i){if(Q&&Q.bor&&!Q.moved&&!lock&&mode=='play'){const el=$('#bf2');if(el){el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500)}sOops();$('#fb').textContent='Pindahkan gambar dulu ya!';return}const s=$('#qv .slot'),b=$('#qc').children[i];if(!s||!b||b.disabled||lock||Q.ty!='ch')return;sPop(3);Q.sel=i;s.innerHTML=Q.ch[i].h;s.classList.add('filled');[...$('#qc').children].forEach((x,j)=>x.classList.toggle('used',j==i));ui()}
-function clearSlot(){const s=$('#qv .slot');if(!s)return;Q.sel=-1;s.innerHTML='?';s.classList.remove('filled');[...$('#qc').children].forEach(x=>x.classList.remove('used'));tone(260,.1,'sine',.15,0,160);ui()}
+/* ===== suara bahasa Indonesia ===== */
+const EMN={'🍎':'apel','🍏':'apel hijau','🐥':'anak ayam','🍓':'stroberi','🐟':'ikan','⭐':'bintang','🍪':'biskuit','🎈':'balon','🦋':'kupu-kupu','🌸':'bunga','🐞':'kepik','🚗':'mobil'};
+function ucap(h){let t=String(h==null?'':h).replace(/<svg[^>]*aria-label="([^"]*)"[^>]*>[\s\S]*?<\/svg>/g,' $1 ').replace(/<br\s*\/?>/g,' ').replace(/<[^>]+>/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+for(const k in EMN)t=t.split(k).join(' '+EMN[k]+' ');
+t=t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,' ').replace(/\u2192/g,' ')
+.replace(/\s*=\s*\?/g,' sama dengan berapa ').replace(/([+\u2212])\s*\?/g,' $1 berapa ').replace(/\?\s*([+\u2212=])/g,' berapa $1 ').replace(/(\d|,)\s*\?\s*(?=\d)/g,'$1 berapa ')
+.replace(/\+/g,' ditambah ').replace(/\u2212/g,' dikurangi ').replace(/\u00D7/g,' dikali ').replace(/=/g,' sama dengan ').replace(/</g,' lebih kecil dari ').replace(/>/g,' lebih besar dari ').replace(/_/g,' huruf yang hilang ').replace(/\?/g,'. ');
+return t.replace(/\s+/g,' ').trim()}
+let fbT=0;
+function speak(t){if(!on||!t)return;try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(ucap(t));u.lang='id-ID';u.rate=.88;u.pitch=1.1;const vs=s.getVoices?s.getVoices():[],v=vs.find(x=>/^id[-_]/i.test(x.lang))||vs.find(x=>/indones/i.test(x.name));if(v)u.voice=v;setTimeout(()=>{try{s.speak(u)}catch(e){}},70)}catch(e){}}
+const fbk=(t,ms)=>{clearTimeout(fbT);fbT=setTimeout(()=>speak(t),ms)};
+const ucapC=c=>ucap(typeof c=='object'?c.h:String(c));
+function ucapQ(Q){if(Q.ty=='frame')return Q.text;if(Q.say)return Q.say;let t=Q.q||'';const v=Q.v||'',nums=()=>[...v.matchAll(/<(?:b|span|i)[^>]*>\s*([^<]*?)\s*<\/(?:b|span|i)>/g)].map(m=>m[1]).filter(x=>x!=='');
+if(Q.k=='seq'||Q.k=='pola')t+=' '+nums().map(x=>x=='?'?'berapa':x).join(', ');
+else if(Q.k=='ban')t+=' '+nums().filter(x=>/^\d+$/.test(x)).join(' dan ');
+else if(Q.k=='vert'||Q.k=='vertS'){const m=nums();t+=' '+m[0]+' '+m[1]+' = ?'}
+else if(Q.k=='story')t=ucap(v)+' '+t;
+else if(Q.k=='shL')t+=' '+ucap(v);
+else if(Q.k=='shPat')t+=' '+[...v.matchAll(/aria-label="([^"]*)"/g)].map(m=>m[1]).join(', ')+', berapa';
+else if(Q.k=='bs')t+='';
+return t}
+function speakQ(){if(mode!='play'||!Q)return;speak(ucapQ(Q))}
+$('#spk').onclick=()=>{sClick();speakQ()};$('#lx').onclick=()=>{speakQ()};
+/* ===== frame interaktif: seret atau ketuk gambar ===== */
+const pvHtml=Q=>{const ad=Q.pc.filter(v=>v==2).length;let h='<div class="pvw"><div class="pvf">';for(let f=0;f*10<Q.pc.length;f++){h+='<div class="pvfr">';for(let k=0;k<10&&f*10+k<Q.pc.length;k++){const i=f*10+k,v=Q.pc[i];h+=`<span class="pcell" data-i="${i}">${v==1?`<i class="po">${Q.e1}</i>`:v==2?`<i class="pa" data-i="${i}">${Q.e2}</i>`:''}</span>`}h+='</div>'}
+return h+`</div><div class="pvt"><span class="pvsrc">${Q.e2}</span><small>${ad?`Ditambah: <b>${ad}</b>. `:''}Seret atau ketuk gambar ke kotak kosong. Ketuk gambar biru untuk menghapus.</small></div></div>`};
+function pvMini(N,a,e1,e2,c){let h='';for(let f=0;f*10<N;f++){let r='';for(let k=0;k<10&&f*10+k<N;k++){const i=f*10+k;r+=i<a?`<span class="mc"><i>${e1}</i></span>`:`<span class="mc ad" style="--d:${((i-a)*.6+.5).toFixed(1)}s;--c:${c}s"><i class="nw">${e2}</i></span>`}h+=`<div class="mf5">${r}</div>`}return`<div class="g2">${h}</div>`}
+function pvDraw(){const e=$('#pvbox');if(e)e.innerHTML=pvHtml(Q)}
+function pvAdd(i){if(!Q||!Q.pv||lock||mode!='play')return;const j=(i!=null&&i>=0&&Q.pc[i]===0)?i:Q.pc.indexOf(0);if(j<0){sOops();return}Q.pc[j]=2;const n=Q.pc.filter(v=>v==2).length;sPop(n);say(n);pvDraw()}
+function pvDel(i,q){if(!Q||!Q.pv||lock||mode!='play'||Q.pc[i]!==2)return;Q.pc[i]=0;if(!q)tone(260,.1,'sine',.15,0,160);pvDraw()}
+let pd=null;
+addEventListener('pointerdown',e=>{if(mode!='play'||lock||!Q||!Q.pv)return;const c=e.target.closest&&e.target.closest('.pvsrc,.pa');if(!c)return;e.preventDefault();pd={src:c.classList.contains('pvsrc'),i:+(c.dataset.i||-1),x:e.clientX,y:e.clientY,g:null,html:c.innerHTML}});
+addEventListener('pointermove',e=>{if(!pd)return;if(!pd.g&&Math.hypot(e.clientX-pd.x,e.clientY-pd.y)>8){const g=document.createElement('div');g.className='ghost';g.innerHTML=pd.html;document.body.append(g);pd.g=g}if(pd.g){pd.g.style.left=e.clientX+'px';pd.g.style.top=e.clientY+'px'}});
+addEventListener('pointerup',e=>{if(!pd)return;const d=pd;pd=null;if(!d.g){if(d.src)pvAdd();else pvDel(d.i)}else{const el=document.elementFromPoint(e.clientX,e.clientY);d.g.remove();const cell=el&&el.closest&&el.closest('.pcell'),inF=el&&el.closest&&el.closest('.pvf');
+if(d.src){if(cell)pvAdd(+cell.dataset.i);else if(inF)pvAdd()}else{if(cell&&+cell.dataset.i!==d.i&&Q.pc[+cell.dataset.i]===0){pvDel(d.i,1);pvAdd(+cell.dataset.i)}else if(!inF)pvDel(d.i)}}});
+addEventListener('pointercancel',()=>{if(pd){if(pd.g)pd.g.remove();pd=null}});
+const slotsEl=()=>[...document.querySelectorAll('#qv .slot')];
+function fillSlot(i,over){if(Q&&Q.bor&&!Q.moved&&!lock&&mode=='play'){const el=$('#bf2');if(el){el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500)}sOops();$('#fb').textContent='Pindahkan gambar dulu ya!';return}
+const S=slotsEl(),b=$('#qc').children[i];if(!S.length||!b||b.disabled||lock||Q.ty!='ch')return;let k=over?S.indexOf(over):0;if(k<0)k=0;sPop(3);
+S.forEach(x=>{x.innerHTML='?';x.classList.remove('filled')});Q.sel=i;S[k].innerHTML=Q.ch[i].h;S[k].classList.add('filled');[...$('#qc').children].forEach((x,j)=>x.classList.toggle('used',j==i));speak(ucapC(Q.ch[i]));ui()}
+function clearSlot(){const S=slotsEl();if(!S.length)return;Q.sel=-1;S.forEach(x=>{x.innerHTML='?';x.classList.remove('filled')});[...$('#qc').children].forEach(x=>x.classList.remove('used'));tone(260,.1,'sine',.15,0,160);ui()}
 addEventListener('pointerdown',e=>{if(mode!='play'||lock||!Q||Q.ty!='ch')return;const c=e.target.closest('.chb'),s=e.target.closest('.slot.filled');if(!c&&!s)return;if(c&&c.disabled)return;e.preventDefault();sd={from:c?+c.dataset.i:'slot',x:e.clientX,y:e.clientY,g:null,html:c?c.innerHTML:s.innerHTML}});
 addEventListener('pointermove',e=>{if(!sd)return;if(!sd.g&&Math.hypot(e.clientX-sd.x,e.clientY-sd.y)>8){const g=document.createElement('div');g.className='ghost';g.innerHTML=sd.html;document.body.append(g);sd.g=g}if(sd.g){sd.g.style.left=e.clientX+'px';sd.g.style.top=e.clientY+'px'}});
-addEventListener('pointerup',e=>{if(!sd)return;const d=sd;sd=null;if(!d.g){if(d.from=='slot')clearSlot();else fillSlot(d.from)}else{const el=document.elementFromPoint(e.clientX,e.clientY),over=el&&el.closest&&el.closest('.slot');d.g.remove();if(d.from=='slot'){if(!over)clearSlot()}else if(over)fillSlot(d.from)}});
+addEventListener('pointerup',e=>{if(!sd)return;const d=sd;sd=null;if(!d.g){if(d.from=='slot')clearSlot();else fillSlot(d.from)}else{const el=document.elementFromPoint(e.clientX,e.clientY),over=el&&el.closest&&el.closest('.slot');d.g.remove();if(d.from=='slot'){if(!over)clearSlot()}else if(over)fillSlot(d.from,over)}});
 addEventListener('pointercancel',()=>{if(sd){if(sd.g)sd.g.remove();sd=null}});
 
 /* soal */
