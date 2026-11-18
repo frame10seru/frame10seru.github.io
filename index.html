@@ -482,18 +482,11 @@ body.inlvl #bnav,body.inlvl #hmb{display:none!important}
 import {initializeApp,deleteApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,deleteUser,GoogleAuthProvider,signInWithPopup,linkWithPopup,sendPasswordResetEmail,reauthenticateWithCredential,EmailAuthProvider,updatePassword,verifyBeforeUpdateEmail} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {getFirestore,doc,getDoc,setDoc,deleteDoc,updateDoc,collection,query,orderBy,limit,getDocs,writeBatch,where} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-/* ===== PENGATURAN SEKOLAH: ganti hanya tulisan GANTI_ di bawah ini ===== */
+/* ===== PENGATURAN SEKOLAH: ganti hanya bagian ini untuk tiap sekolah ===== */
 const NAMA_SEKOLAH='';   /* opsional, contoh: 'SD Harapan Bangsa' */
-const FIREBASE_CONFIG={
-  apiKey:"GANTI_apiKey",
-  authDomain:"GANTI_authDomain",
-  projectId:"GANTI_projectId",
-  storageBucket:"GANTI_storageBucket",
-  messagingSenderId:"GANTI_messagingSenderId",
-  appId:"GANTI_appId"
-};
-const WA_NOMOR='';   /* nomor WhatsApp admin, format 628xxxxxxxxxx (tanpa + atau spasi). Kosongkan untuk menyembunyikan kartu WhatsApp */
-const WA_NAMA='';
+const FIREBASE_CONFIG={apiKey:"AIzaSyBHt4JrWTy36yHeCaxMg8Xu_9MFPcZ5yrs",authDomain:"frame-sepuluh-seru-bd775.firebaseapp.com",projectId:"frame-sepuluh-seru-bd775",storageBucket:"frame-sepuluh-seru-bd775.firebasestorage.app",messagingSenderId:"780709103856",appId:"1:780709103856:web:2ac00d4d9905d2dab75a35"};
+const WA_NOMOR='6289506191525';   /* nomor WhatsApp admin, format 628xxxxxxxxxx (tanpa + atau spasi). Kosongkan untuk menyembunyikan kartu WhatsApp */
+const WA_NAMA='Ms Annisa';
 const LULUS_RONDE=10;
 const LIGA_NAIK=3,LIGA_TURUN=3,LIGA_MIN=10,LIGA_HARI=5;   /* liga: jumlah yang naik, jumlah yang turun, minimal siswa aktif agar ada yang turun, minimal hari bermain per minggu agar boleh naik */   /* jumlah jawaban benar (dari 10, percobaan pertama) agar ronde lolos */
 const KONFIRMASI_KELUAR_RONDE=true;   /* true: tombol kembali saat ronde berjalan menampilkan pertanyaan keluar */
@@ -543,7 +536,6 @@ function bg(){clearInterval(bgT);bgT=0;if(!on)return;const s=[262,330,392,440,39
 $('#snd').onclick=()=>{on=!on;$('#snd').textContent=on?'🔊':'🔇';$('#snd').setAttribute('aria-pressed',on);if(on){sClick();bg()}else{clearInterval(bgT);bgT=0;try{speechSynthesis.cancel()}catch(e){}}};
 addEventListener('pointerdown',()=>{if(on&&!bgT)bg()});
 /* akun dan kemajuan (Firebase) */
-if(FIREBASE_CONFIG.apiKey.indexOf('GANTI_')==0)setTimeout(()=>msg('Kode Firebase belum dipasang di file ini.'),400);
 if(NAMA_SEKOLAH){$('#sk').textContent=NAMA_SEKOLAH;document.title=NAMA_SEKOLAH+' | '+document.title}
 const auth=getAuth(fb),fs=getFirestore(fb);
 let T=false,G=false,reg=false,P=null,cur='',uid='',pn='',NM={};
@@ -590,11 +582,12 @@ catch(e){try{await deleteUser(u)}catch(_){}reg=false;sOops();setTimeout(()=>{pag
 reg=false;await loadMe(u)}
 catch(e){reg=false;sOops();msg2(e.code=='auth/email-already-in-use'?'Nama ini sudah dipakai. Pilih nama lain.':'Gagal mendaftar. Periksa internet lalu coba lagi.')}};
 $('#greg').onclick=async()=>{const tp=jenis(),k=cl($('#kg').value),n0=$('#nm2').value.trim();if(k.length<6){msg2('Isi kode pendaftaran dari guru.');return}sClick();msg2('Membuka Google...');reg=true;let u;
-try{u=(await signInWithPopup(auth,gprov())).user}catch(e){reg=false;sOops();msg2(e.code=='auth/popup-closed-by-user'?'':'Gagal membuka Google. Izinkan pop-up dan pastikan domain game diizinkan di Firebase.');return}
+try{u=(await signInWithPopup(auth,gprov())).user}catch(e){reg=false;sOops();msg2(e.code=='auth/popup-closed-by-user'?'':gErr(e,'membuka Google'));return}
 try{const ex=await getDoc(doc(fs,'players',u.uid));if(!ex.exists())await makePlayer(u,tp,k,(isMail(n0)?n0.split('@')[0]:n0||(u.displayName||'pemain').split(' ')[0]).slice(0,14),'')}
 catch(e){try{await deleteUser(u)}catch(_){await signOut(auth)}reg=false;sOops();setTimeout(()=>{page('d');msg2(e.message=='kuota'?'Kuota siswa guru ini sudah penuh. Hubungi gurumu.':'Kode salah atau sudah dipakai. Akun belum dibuat, silakan coba lagi.')},500);return}
 reg=false;await loadMe(u)};
-$('#glog').onclick=async()=>{sClick();msg('Membuka Google...');try{await signInWithPopup(auth,gprov())}catch(e){sOops();msg(e.code=='auth/popup-closed-by-user'?'':e.code=='auth/popup-blocked'?'Pop-up diblokir. Izinkan pop-up lalu coba lagi.':'Gagal masuk dengan Google. Pastikan domain game sudah diizinkan di Firebase.')}};
+function gErr(e,aksi){const c=(e&&e.code)||'';console.error('Google',e);const m={'auth/unauthorized-domain':'Domain game belum diizinkan di Firebase (Authentication > Settings > Authorized domains).','auth/popup-blocked':'Pop-up diblokir. Izinkan pop-up untuk situs ini lalu coba lagi.','auth/cancelled-popup-request':'Terlalu cepat mengetuk. Tunggu sebentar lalu coba lagi.','auth/network-request-failed':'Internet bermasalah. Periksa sambungan lalu coba lagi.','auth/operation-not-allowed':'Login Google belum diaktifkan di Firebase.','auth/operation-not-supported-in-this-environment':'Browser ini tidak mendukung login Google. Buka game di Chrome.','auth/web-storage-unsupported':'Browser memblokir penyimpanan. Aktifkan cookie atau buka di Chrome biasa, bukan mode samaran.','auth/internal-error':'Ada galat dari Google. Coba lagi sebentar lagi.','auth/too-many-requests':'Terlalu banyak percobaan. Tunggu beberapa menit.'};return (m[c]||('Gagal '+aksi+'.'))+(c?' (kode: '+c+')':'')}
+$('#glog').onclick=async()=>{sClick();msg('Membuka Google...');try{await signInWithPopup(auth,gprov())}catch(e){sOops();msg(e.code=='auth/popup-closed-by-user'?'':gErr(e,'masuk dengan Google'))}};
 $('#kd').onclick=()=>{sClick();msg('');page('d')};
 $('#pw').onkeydown=e=>{if(e.key=='Enter')$('#log').click()};
 $('#out').onclick=()=>{sClick();if(TR){TR=false;showLogin()}else signOut(auth)};
@@ -611,7 +604,7 @@ try{if(fk){const k=hk(n);if(k==P.hk){await updateDoc(doc(fs,'players',uid),{nama
 cur=n;if(LG){LG.nama=n;ligaSaveSoon()}$('#who').textContent=whoText();$('#ainfo').textContent='Nama: '+cur;$('#un').value='';am('Nama pengguna diubah menjadi '+n+'. Masuk berikutnya pakai nama ini.')}catch(e){sOops();am('Gagal. Nama itu mungkin sudah dipakai orang lain.')}};
 $('#spw').onclick=async()=>{const u=auth.currentUser,p0=$('#pw0').value,p1=$('#pw1').value;if(!u||!u.email)return;if(p1.length<6){am('Kata sandi baru minimal 6 karakter.');return}sClick();
 try{await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,p0));await updatePassword(u,p1);$('#pw0').value='';$('#pw1').value='';am('Kata sandi berhasil diubah.')}catch(e){sOops();am(e.code=='auth/wrong-password'||e.code=='auth/invalid-credential'?'Kata sandi sekarang salah.':'Gagal mengubah kata sandi. Coba lagi.')}};
-$('#glink').onclick=async()=>{const u=auth.currentUser;if(!u)return;sClick();try{await linkWithPopup(u,gprov());showAkun();am('Akun Google berhasil dihubungkan.')}catch(e){sOops();am(e.code=='auth/credential-already-in-use'?'Akun Google itu sudah dipakai akun lain.':e.code=='auth/popup-closed-by-user'?'':'Gagal menghubungkan Google. Izinkan pop-up dan pastikan domain game diizinkan di Firebase.')}};
+$('#glink').onclick=async()=>{const u=auth.currentUser;if(!u)return;sClick();try{await linkWithPopup(u,gprov());showAkun();am('Akun Google berhasil dihubungkan.')}catch(e){sOops();am(e.code=='auth/credential-already-in-use'?'Akun Google itu sudah dipakai akun lain.':e.code=='auth/popup-closed-by-user'?'':gErr(e,'menghubungkan Google'))}};
 $('#lupab').onclick=()=>{sClick();$('#lupa').hidden=!$('#lupa').hidden};
 $('#lsend').onclick=async()=>{const e=$('#lem').value.trim();if(!isMail(e)){msg('Tulis alamat email yang benar.');return}sClick();try{await sendPasswordResetEmail(auth,e);msg('Jika email itu terdaftar, tautan reset sudah dikirim. Cek kotak masuk dan folder spam.')}catch(x){msg('Gagal mengirim. Periksa email dan internet.')}};
 {const lw=$('#lupawa');if(lw&&!waH('x'))lw.hidden=true}
